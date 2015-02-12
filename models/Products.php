@@ -128,7 +128,7 @@ class Products extends \yii\db\ActiveRecord
             $model->filename = md5(time()) . '.' . end(explode('.', $image));
 
             //  Качаем файл.
-            $this->download($image, Yii::$app->getBasePath() . '/web/uploads/' . $model->filename);
+            $this->download($image, Yii::$app->getBasePath() . '/web/uploads/original/' . $model->filename);
 
             if (!$model->save()) {
                 throw new Exception('Не удалось сохранить изображение для товара ' . $this->id);
@@ -150,7 +150,7 @@ class Products extends \yii\db\ActiveRecord
             $model->product_id = $this->id;
             $model->name = $property['name'];
             $model->value = $property['value'];
-            if (!$model->save()) {
+            if ($model->validate() && !$model->save()) {
                 var_dump($model->getErrors());
                 throw new Exception('Не удалось сохранить свойство для товара ' . $this->id);
             }

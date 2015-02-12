@@ -6,8 +6,6 @@ use yii\console\Controller;
 use serhatozles\simplehtmldom\SimpleHTMLDom;
 use app\models\Categories;
 use yii\console\Exception;
-use yii\db\ActiveRecord;
-use yii\db\Expression;
 
 /**
  * Команда парсинга сайта tonar.info
@@ -31,8 +29,45 @@ class TonarController extends Controller
             if (!$category) {
                 $category = new Categories;
                 $category->name = $name;
+
+                //  Получим описание категории.
+                $rootCategory = SimpleHTMLDom::file_get_html(self::BASE_URL . $a->href);
+                $description = $rootCategory->find('.description', 0);
+                $category->description = trim($description ? $description->innertext : '');
+
                 if (!$category->save()) {
+                    var_dump($category->getErrors());
                     throw new Exception('Не удалось создать категорию');
+                }
+            }
+
+            //  Если есть родители, то ничего не делаем.
+            if ($a->parent()->parent()->parent()->tag == 'li') {
+                continue;
+            }
+
+            //  Выясняем, есть ли подкатегории.
+            $subA = $a->parent()->find('ul a');
+            if (count($subA)) {
+                foreach ($subA as $sa) {
+                    $subName = html_entity_decode(trim($sa->text()));
+                    $subCategory = Categories::findOne(['name' => $subName]);
+
+                    if (!$subCategory) {
+                        $subCategory = new Categories;
+                        $subCategory->name = $subName;
+                        $subCategory->parent_id = $category->id;
+
+                        //  Получим описание категории.
+                        $description = $rootCategory->find('.description', 0);
+                        $subCategory->description = trim($description ? $description->innertext : '');
+
+                        if (!$subCategory->save()) {
+                            throw new Exception('Не удалось создать подкатегорию');
+                        }
+                    }
+
+                    $this->getProducts($subCategory, $sa->href);
                 }
             }
 
@@ -52,7 +87,8 @@ class TonarController extends Controller
         $root = SimpleHTMLDom::file_get_html(self::BASE_URL . $url);
         $products = [];
         foreach ($root->find('.catalog-section-item-img') as $item) {
-            $products[] = $this->getProductInfo($category, $item->href);
+            $shortDesc = html_entity_decode(trim($item->parent()->find('.list_element_text', 0)->text()));
+            $products[] = $this->getProductInfo($category, $item->href, $shortDesc);
         }
 
         return $products;
@@ -60,9 +96,13 @@ class TonarController extends Controller
 
     /**
      * Вернет информацию о товаре по url а так же сделает нужные записи в базе.
-     * @param string $url
+     * @param $category
+     * @param $url
+     * @param $shortDesc
+     * @return Products|static
+     * @throws Exception
      */
-    private function getProductInfo(&$category, $url)
+    private function getProductInfo(&$category, $url, $shortDesc)
     {
         echo "=== $url\n";
 
@@ -70,6 +110,7 @@ class TonarController extends Controller
         $parseKey = sha1($url);
         $product = Products::findOne(['parse_key' => $parseKey]);
         if ($product) {
+            //  Если нашли продукт, то ничего не делаем с ним.
             return $product;
         }
         else {
@@ -84,7 +125,9 @@ class TonarController extends Controller
         $product->name = trim(strip_tags($root->find('.card_title', 0)->innertext));
         $product->description = trim(strip_tags($root->find('.card_description', 0)->innertext));
         $product->description = preg_replace('/[\s]{2,}/', ' ', $product->description);
+        $product->description_short = preg_replace('/[\s]{2,}/', ' ', $shortDesc);
         $product->category_id = $category->id;
+        $product->parse_key = $parseKey;
 
         //  Парсинг изображений.
         foreach ($root->find('.card_left .fancybox') as $img) {
@@ -105,7 +148,7 @@ class TonarController extends Controller
         $product->properties = $properties;
         if (!$product->save()) {
             var_dump($product->getErrors());
-            throw new Exception('Не удалось сохранить товар! ');
+            throw new Exception('Не удалось сохранить товар!');
         }
 
         return $product;

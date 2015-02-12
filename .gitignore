@@ -29,4 +29,3 @@ phpunit.phar
 web/uploads
 assets
 runtime
-vendor

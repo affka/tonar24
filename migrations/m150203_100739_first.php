@@ -18,8 +18,13 @@ class m150203_100739_first extends Migration
         //  Таблица категорий.
         $this->createTable('{{%categories}}', [
             'id' => Schema::TYPE_PK,
-            'name' => Schema::TYPE_STRING . ' NOT NULL'
+            'parent_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL',
+            'name' => Schema::TYPE_STRING . ' NOT NULL',
+            'description' => Schema::TYPE_TEXT . ' DEFAULT NULL',
+            'slug' => Schema::TYPE_STRING . ' NOT NULL'
         ], $tableOptions);
+
+        $this->createIndex('IDX_categories_pid', '{{%categories}}', 'parent_id');
 
         //  Таблица товаров.
         $this->createTable('{{%products}}', [
