@@ -91,8 +91,6 @@ AppAsset::register($this);
     <div class="container">
         <div class="aside">
             <div class="aside1">
-
-
                 <div class="nav">
                     <p>Каталог</p>
                     <?= \app\widgets\LeftMenu::widget(); ?>
@@ -101,6 +99,15 @@ AppAsset::register($this);
         </div>
 
         <div class="content">
+            <?= Breadcrumbs::widget([
+                'itemTemplate'=>"<li>{link} > </li>",
+                'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+                'homeLink' => [
+                    'label' => 'Главная',
+                    'url' => Yii::$app->getHomeUrl(),
+                    'itemprop' => 'url',
+                ],
+            ]); ?>
             <?= $content ?>
         </div>
 

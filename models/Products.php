@@ -114,7 +114,30 @@ class Products extends \yii\db\ActiveRecord
     }
 
     /**
-     * Соранит изображения.
+     * Связь с таблицей product_images.
+     * @return \yii\db\ActiveQuery
+     */
+    public function getImages()
+    {
+        return $this->hasMany(ProductImages::className(), ['product_id' => 'id']);
+    }
+
+    /**
+     * Вернет модель первого изображения для этого товара.
+     * @return string
+     */
+    public function getFirstImage()
+    {
+        $image = ProductImages::findOne(['product_id' => $this->id]);
+        if (!$image) {
+            return '';
+        }
+
+        return '/uploads/original/' . $image->filename;
+    }
+
+    /**
+     * Сохранит изображения.
      */
     private function saveImages()
     {

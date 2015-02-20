@@ -770,3 +770,25 @@ margin-right: 10px;
 }
 .logo a.feedback { top: 70px; }
 .logo a.sales_department { top: 90px; }
+
+.breadcrumb {
+	//
+}
+
+.breadcrumb li {
+	display: inline;
+}
+
+.catalog-list li {
+	display: inline;
+}
+
+.catalog-list a {
+	text-decoration: none;
+	color: #006699;
+	font-weight: bold;
+}
+
+.catalog-list div.description {
+	color: #333;
+}

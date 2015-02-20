@@ -56,6 +56,15 @@ class Categories extends \yii\db\ActiveRecord
     }
 
     /**
+     * Связь с таблицей products.
+     * @return \yii\db\ActiveQuery
+     */
+    public function getItems()
+    {
+        return $this->hasMany(Products::className(), ['category_id' => 'id']);
+    }
+
+    /**
      * @inheritdoc
      */
     public function attributeLabels()

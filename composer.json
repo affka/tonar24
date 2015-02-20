@@ -19,7 +19,8 @@
         "yiisoft/yii2-bootstrap": "*",
         "yiisoft/yii2-swiftmailer": "*",
         "serhatozles/yii2-simplehtmldom": "dev-master",
-        "zelenin/yii2-slug-behavior": "~0.2@stable"
+        "zelenin/yii2-slug-behavior": "~0.2@stable",
+        "yiisoft/yii2-imagine": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
