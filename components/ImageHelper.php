@@ -3,7 +3,7 @@
  * @author Dmitriy Yurchenko <evildev@evildev.ru>
  */
 
-namespace helpers;
+namespace app\components;
 
 use yii\web\HttpException;
 
@@ -25,13 +25,14 @@ class ImageHelper
      */
     public static function resize($source, $width, $height, $params = [])
     {
-        $uploadsPath = \Yii::$app->basePath . '/web/uploads/original/';
+        $uploadsPath = \Yii::$app->basePath . '/web';
         $sourceName = $uploadsPath . $source;
         if (!is_file($sourceName)) {
             return '';
         }
 
         $_parts = explode(':', basename($source));
+        var_dump($sourceName);die();
         $_partsExt = explode('.', $_parts[1]);
         $ext = '.' . end($_partsExt);
         $fileName = basename($_parts[1], $ext) . '_' . $width . 'x' . $height . $ext;
@@ -45,16 +46,10 @@ class ImageHelper
 
         $imagine = new \Imagine\Imagick\Imagine();
         $image = $imagine->open($sourceName);
-        $geometry = $image->getSize();
+        //$geometry = $image->getSize();
 
-        if ($width > $geometry->getWidth()) {
-            $width = $geometry->getWidth();
-        }
         if ($width < 0) {
             $width = 0;
-        }
-        if ($height > $geometry->getHeight()) {
-            $height = $geometry->getHeight();
         }
         if ($height < 0) {
             $height = 0;
