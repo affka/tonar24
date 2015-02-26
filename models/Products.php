@@ -148,10 +148,15 @@ class Products extends \yii\db\ActiveRecord
         foreach ($this->images as $image) {
             $model = new ProductImages;
             $model->product_id = $this->id;
-            $model->filename = md5(time()) . '.' . end(explode('.', $image));
+            $model->filename = md5(time()) . '.' . pathinfo($image, PATHINFO_EXTENSION);
+
+            $uploadDir = Yii::$app->getBasePath() . '/web/uploads/original';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0775, true);
+            }
 
             //  Качаем файл.
-            $this->download($image, Yii::$app->getBasePath() . '/web/uploads/original/' . $model->filename);
+            $this->download($image, $uploadDir . '/' . $model->filename);
 
             if (!$model->save()) {
                 throw new Exception('Не удалось сохранить изображение для товара ' . $this->id);
