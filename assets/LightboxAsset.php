@@ -13,20 +13,16 @@ use yii\web\AssetBundle;
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
  */
-class AppAsset extends AssetBundle
+class LightboxAsset extends AssetBundle
 {
-    public $basePath = '@webroot';
+    public $sourcePath = '@bower';
     public $baseUrl = '@web';
     public $css = [
-        'css/style.css',
+        'lightbox2/css/lightbox.css'
     ];
     public $js = [
-        'js/main.js',
+        'lightbox2/js/lightbox.js'
     ];
     public $depends = [
-        'yii\web\YiiAsset',
-        'yii\bootstrap\BootstrapPluginAsset',
-        'yii\web\JqueryAsset',
-        'app\assets\LightboxAsset'
     ];
 }

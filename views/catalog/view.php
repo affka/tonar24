@@ -10,15 +10,17 @@ $this->params['breadcrumbs'][] = $model->name;
 
 <?= $model->description; ?>
 
-<ul class="catalog-list">
+<div class="row">
     <?php /** @var \app\models\Products $item */ ?>
     <?php foreach ($model->items as $item) { ?>
-        <li>
-            <a href="/product/<?= $item->slug; ?>">
-                <?= ImageHelper::img($item->getFirstImage(), 200, 132); ?>
-                <div><?= $item->name ?></div>
-                <div class="description"><?= $item->description_short ?></div>
-            </a>
-        </li>
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail thumbnail-product">
+                <?= ImageHelper::img($item->getFirstImage(), 300, 132, ['thumbnail' => true]); ?>
+                <div class="caption">
+                    <a href="/product/<?= $item->slug; ?>"><?= $item->name ?></a>
+                    <p><?= $item->description_short ?></p>
+                </div>
+            </div>
+        </div>
     <?php } ?>
-</ul>
+</div>

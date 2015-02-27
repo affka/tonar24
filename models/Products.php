@@ -18,18 +18,20 @@ use yii\db\ActiveRecord;
  * @property string $date_create
  * @property string $date_update
  * @property string $parse_key
+ *
+ * @property Categories $category
  */
 class Products extends \yii\db\ActiveRecord
 {
     /**
      * @var array
      */
-    public $images = [];
+    public $productImages = [];
 
     /**
      * @var array
      */
-    public $properties = [];
+    public $productProperties = [];
 
     /**
      * @inheritdoc
@@ -123,6 +125,24 @@ class Products extends \yii\db\ActiveRecord
     }
 
     /**
+     * Связь с таблицей categories.
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCategory()
+    {
+        return $this->hasOne(Categories::className(), ['id' => 'category_id']);
+    }
+
+    /**
+     * Связь с таблицей product_properties.
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProperties()
+    {
+        return $this->hasMany(ProductProperties::className(), ['product_id' => 'id']);
+    }
+
+    /**
      * Вернет модель первого изображения для этого товара.
      * @return string
      */
@@ -141,11 +161,11 @@ class Products extends \yii\db\ActiveRecord
      */
     private function saveImages()
     {
-        if (!count($this->images)) {
+        if (!count($this->productImages)) {
             return;
         }
 
-        foreach ($this->images as $image) {
+        foreach ($this->productImages as $image) {
             $model = new ProductImages;
             $model->product_id = $this->id;
             $model->filename = md5(time()) . '.' . pathinfo($image, PATHINFO_EXTENSION);
@@ -169,11 +189,11 @@ class Products extends \yii\db\ActiveRecord
      */
     private function saveProperties()
     {
-        if (!count($this->properties)) {
+        if (!count($this->productProperties)) {
             return;
         }
 
-        foreach ($this->properties as $property) {
+        foreach ($this->productProperties as $property) {
             $model = new ProductProperties;
             $model->product_id = $this->id;
             $model->name = $property['name'];

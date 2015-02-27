@@ -43,6 +43,7 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 'catalog/<alias>' => 'catalog/view',
+                'product/<alias>' => 'product/view',
                 '<controller:\w+>/<id:\w+>' => '<controller>',
                 '<controller:\w+>/<action:\w+>/<id:\w+>' => '<controller>/<action>',
                 '<controller:\w+>/<action:\w+>' => '<controller>/<action>'

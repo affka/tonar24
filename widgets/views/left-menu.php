@@ -5,7 +5,7 @@
 ?>
 <ul>
     <?php foreach ($menu as $item) { ?>
-        <li><a href="/catalog/<?= $item['parent']->slug ?>/" class=""><?= $item['parent']->name ?></a></li>
+        <li><a href="/catalog/<?= $item['parent']->slug ?>" class=""><?= $item['parent']->name ?></a></li>
         <?php if (count($item['childs'])) { ?>
             <ul>
             <?php foreach ($item['childs'] as $child) { ?>
