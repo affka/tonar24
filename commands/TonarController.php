@@ -24,6 +24,7 @@ class TonarController extends Controller
     {
         $root = SimpleHTMLDom::file_get_html(self::BASE_URL . '/catalog/');
         foreach ($root->find('.aside1 a') as $a) {
+            $rootCategory = null;
             $name = html_entity_decode(trim($a->text()));
             $category = Categories::findOne(['name' => $name]);
             if (!$category) {
@@ -59,8 +60,10 @@ class TonarController extends Controller
                         $subCategory->parent_id = $category->id;
 
                         //  Получим описание категории.
-                        $description = $rootCategory->find('.description', 0);
-                        $subCategory->description = trim($description ? $description->innertext : '');
+                        if ($rootCategory) {
+                            $description = $rootCategory->find('.description', 0);
+                            $subCategory->description = trim($description ? $description->innertext : '');
+                        }
 
                         if (!$subCategory->save()) {
                             throw new Exception('Не удалось создать подкатегорию');
@@ -144,8 +147,8 @@ class TonarController extends Controller
             ];
         }
 
-        $product->images = $images;
-        $product->properties = $properties;
+        $product->productImages = $images;
+        $product->productProperties = $properties;
         if (!$product->save()) {
             var_dump($product->getErrors());
             throw new Exception('Не удалось сохранить товар!');
