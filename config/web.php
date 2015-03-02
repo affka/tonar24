@@ -62,4 +62,10 @@ if (YII_ENV_DEV) {
     $config['modules']['gii'] = 'yii\gii\Module';
 }
 
+// Append custom config
+$customConfigPath = __DIR__ . '/../config.php';
+if (file_exists($customConfigPath)) {
+    $config = \yii\helpers\ArrayHelper::merge($config, require $customConfigPath);
+}
+
 return $config;
