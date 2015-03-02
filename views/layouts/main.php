@@ -24,9 +24,34 @@ AppAsset::register($this);
 
 <?php $this->beginBody() ?>
 
-<div class="container">
     <header>
+        <div class="container logo-line">
+            <img src="<?= \Yii::$app->request->baseUrl ?>/img/logo.png" width="103" alt="<?= \Yii::$app->name ?>" />
+            <div class="logo-name">
+                «Тонар» Красноярск
+                <div class="address">
+                    ул. Северное шоссе 17
+                </div>
+            </div>
+            <div class="logo-phone">
+                Тел. +7 (391) 276-22-15
+            </div>
+        </div>
+
+        <?php
+            NavBar::begin([
+            ]);
+            echo Nav::widget([
+                'options' => ['class' => 'navbar-nav'],
+                'items' => [
+                    ['label' => 'Главная', 'url' => ['/index/index']],
+                    ['label' => 'Каталог', 'url' => ['/site/about']],
+                ],
+            ]);
+            NavBar::end();
+        ?>
     </header>
+<div class="container">
     <div class="row">
         <aside class="col-xs-4">
             <p>Каталог</p>
