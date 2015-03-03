@@ -19,6 +19,15 @@ class IndexController extends Controller
     /**
      * Отображение ошибки на сайте.
      */
+    public function actionContact()
+    {
+        $this->getView()->title = 'Контактная информация';
+        return $this->render('contact');
+    }
+
+    /**
+     * Отображение ошибки на сайте.
+     */
     public function actionError()
     {
         //

@@ -10,6 +10,9 @@ header {
             padding: 15px 0 0 50px;
             font-weight: bold;
             font-size: 22px;
+            a {
+                color: #003366;
+            }
             
             .address {
                 font-size: 13px;
@@ -31,6 +34,62 @@ header {
 
         .navbar-collapse {
             padding: 0;
+        }
+    }
+}
+
+.catalog-menu {
+    ul {
+        padding-left: 00px;
+        list-style: none;
+        ul {
+            list-style: square;
+            padding-left: 30px;
+            padding-bottom: 5px;
+        }
+
+        li {
+            position: relative;
+        }
+
+        a {
+            display: block;
+            padding: 5px 8px;
+            margin: 0 0 0 -5px;
+            background-color: #fff;
+
+            transition-property: background;
+            transition-duration: 0.3s;
+
+            &:after {
+                position: absolute;
+                content: '';
+                border-style: solid;
+                transition-duration: 0.3s;
+                transition-property: border right;
+                top: -1px;
+                right: -10px;
+                border-width: 16px 0 16px 10px;
+                border-color: transparent transparent transparent #fff;
+            }
+
+            &:hover {
+                background-color: #eee;
+                text-decoration: none;
+
+                &:after {
+                    border-color: transparent transparent transparent #eee;
+                }
+            }
+        }
+
+        li.active {
+            > a {
+                background-color: #e6e9f0;
+                &:after {
+                    border-color: transparent transparent transparent #e6e9f0;
+                }
+            }
         }
     }
 }

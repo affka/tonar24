@@ -11,6 +11,9 @@ header .logo-line .logo-name {
   font-weight: bold;
   font-size: 22px;
 }
+header .logo-line .logo-name a {
+  color: #003366;
+}
 header .logo-line .logo-name .address {
   font-size: 13px;
   font-weight: bold;
@@ -28,6 +31,50 @@ header .navbar {
 }
 header .navbar .navbar-collapse {
   padding: 0;
+}
+.catalog-menu ul {
+  padding-left: 00px;
+  list-style: none;
+}
+.catalog-menu ul ul {
+  list-style: square;
+  padding-left: 30px;
+  padding-bottom: 5px;
+}
+.catalog-menu ul li {
+  position: relative;
+}
+.catalog-menu ul a {
+  display: block;
+  padding: 5px 8px;
+  margin: 0 0 0 -5px;
+  background-color: #fff;
+  transition-property: background;
+  transition-duration: 0.3s;
+}
+.catalog-menu ul a:after {
+  position: absolute;
+  content: '';
+  border-style: solid;
+  transition-duration: 0.3s;
+  transition-property: border right;
+  top: -1px;
+  right: -10px;
+  border-width: 16px 0 16px 10px;
+  border-color: transparent transparent transparent #fff;
+}
+.catalog-menu ul a:hover {
+  background-color: #eee;
+  text-decoration: none;
+}
+.catalog-menu ul a:hover:after {
+  border-color: transparent transparent transparent #eee;
+}
+.catalog-menu ul li.active > a {
+  background-color: #e6e9f0;
+}
+.catalog-menu ul li.active > a:after {
+  border-color: transparent transparent transparent #e6e9f0;
 }
 .thumbnail {
   border: none;

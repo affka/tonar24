@@ -26,9 +26,13 @@ AppAsset::register($this);
 
     <header>
         <div class="container logo-line">
-            <img src="<?= \Yii::$app->request->baseUrl ?>/img/logo.png" width="103" alt="<?= \Yii::$app->name ?>" />
+            <a href="<?= \yii\helpers\Url::to(['/index/index']); ?>">
+                <img src="<?= \Yii::$app->request->baseUrl ?>/img/logo.png" width="103" alt="<?= \Yii::$app->name ?>" />
+            </a>
             <div class="logo-name">
-                «Тонар» Красноярск
+                <a href="<?= \yii\helpers\Url::to(['/index/index']); ?>">
+                ООО «Красноярск Тонар Сервис»
+                </a>
                 <div class="address">
                     ул. Северное шоссе 17
                 </div>
@@ -45,7 +49,7 @@ AppAsset::register($this);
                 'options' => ['class' => 'navbar-nav'],
                 'items' => [
                     ['label' => 'Главная', 'url' => ['/index/index']],
-                    ['label' => 'Каталог', 'url' => ['/site/about']],
+                    ['label' => 'Контакты', 'url' => ['/index/contact']],
                 ],
             ]);
             NavBar::end();
@@ -53,8 +57,8 @@ AppAsset::register($this);
     </header>
 <div class="container">
     <div class="row">
-        <aside class="col-xs-4">
-            <p>Каталог</p>
+        <aside class="col-xs-4 catalog-menu">
+            <h2>Каталог</h2>
             <?= \app\widgets\LeftMenu::widget(); ?>
         </aside>
         <section class="col-xs-8">

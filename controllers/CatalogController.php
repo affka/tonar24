@@ -9,14 +9,11 @@ use yii\web\HttpException;
 
 class CatalogController extends Controller
 {
-    /**
-     * Главная страница.
-     */
-    public function actionView($alias = '')
+    public function actionView($slug = '')
     {
         $this->getView()->title = 'Категория';
 
-        $category = Categories::findOne(['slug' => $alias]);
+        $category = Categories::findOne(['slug' => $slug]);
         if (!$category) {
             throw new HttpException(404, 'Категория не найдена');
         }
