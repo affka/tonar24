@@ -76,6 +76,54 @@ header .navbar .navbar-collapse {
 .catalog-menu ul li.active > a:after {
   border-color: transparent transparent transparent #e6e9f0;
 }
+.service-map {
+  position: relative;
+  margin-top: -20px;
+}
+.service-map #YMapsID {
+  width: 100%;
+  min-height: 300px;
+}
+.service-map #YMapsID .map_shop_adress {
+  max-width: 250px;
+}
+.service-map .dealers {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  bottom: 15px;
+  z-index: 10;
+  overflow: scroll;
+}
+.service-map .dealers ul,
+.service-map .dealers ol {
+  padding: 0;
+  margin: 0;
+}
+.service-map .dealers ul {
+  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.8);
+  list-style: none;
+  padding: 10px;
+  box-sizing: border-box;
+}
+.service-map .dealers ul li {
+  padding: 2px 0;
+  margin-left: 10px;
+}
+.service-map .dealers ul li span {
+  font-weight: bold;
+}
+.service-map .dealers ul li ol {
+  list-style: square;
+}
+.service-map .dealers ul li ol li {
+  margin-left: 25px;
+}
+#yii-debug-toolbar {
+  position: fixed;
+  bottom: 0;
+}
 .thumbnail {
   border: none;
 }

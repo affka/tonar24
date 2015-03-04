@@ -43,12 +43,12 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 '' => 'index/index',
-                'contact' => 'index/contact',
                 'catalog/<slug>' => 'catalog/view',
                 'product/<slug>' => 'product/view',
+                '<action:(contact|service-map)>' => 'index/<action>',
                 '<controller:\w+>/<id:\w+>' => '<controller>',
                 '<controller:\w+>/<action:\w+>/<id:\w+>' => '<controller>/<action>',
-                '<controller:\w+>/<action:\w+>' => '<controller>/<action>'
+                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
             ]
         ],
     ],
