@@ -105,13 +105,13 @@ class TonarController extends Controller
 
             $lastSavedIndex = 0;
             $openedChar = null;
-            for ($index = 0; $index < strlen($code); $index++) {
+            for ($index = 0; $index < mb_strlen($code); $index++) {
                 $char = $code[$index];
 
                 switch ($char) {
                     case ',':
                         if ($openedChar === null) {
-                            $item[] = trim(mb_substr($code, $lastSavedIndex, $index - $lastSavedIndex), " \t\n\r\0\x0B\"'()");
+                            $item[] = trim(mb_substr($code, $lastSavedIndex, $index - $lastSavedIndex), " \t\n\r\0\x0B\"'");
                             $lastSavedIndex = $index + 1;
                         }
                         break;
@@ -129,12 +129,12 @@ class TonarController extends Controller
                 }
             }
 
-            $item[] = trim(mb_substr($code, $lastSavedIndex), " \t\n\r\0\x0B\"'()");
+            $item[] = trim(mb_substr($code, $lastSavedIndex), " \t\n\r\0\x0B\"'");
 
             list ($geoPointX, $geoPointY, $name, $description, $address, $phone, $siteUrl, $detailUrl, $tonarId, $city) = $item;
             $geoPointX = preg_replace('/.*[^0-9.]([0-9.]+)$/', '$1', $geoPointX);
-            $name = html_entity_decode($name); // name
-            $description = html_entity_decode($description); // name
+            $name = html_entity_decode($name);
+            $description = html_entity_decode($description);
 
             $tonarIds[] = (int) $tonarId;
 
