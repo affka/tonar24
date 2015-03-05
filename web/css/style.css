@@ -127,18 +127,23 @@ header .navbar .navbar-collapse {
 .thumbnail {
   border: none;
 }
-.thumbnail-product img {
+.thumbnail-catalog img {
   height: 132px;
 }
-.thumbnail-product a {
+.thumbnail-catalog a {
+  display: inline-block;
+  height: 42px;
   font-weight: bold;
 }
-.thumbnail-product a.catalog-img {
-  height: 114px;
-  display: inline-block;
+.thumbnail-catalog a.catalog-img {
+  height: 108px;
 }
-.thumbnail-product p {
-  height: 64px;
+.thumbnail-catalog p {
+  height: 68px;
   line-height: 16px;
   overflow: hidden;
+}
+.thumbnail-product a {
+  height: 75px;
+  display: inline-block;
 }

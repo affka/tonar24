@@ -31,9 +31,9 @@ $this->params['breadcrumbs'][] = $product->name;
                             </div>
                         <?php } else { ?>
                             <div class="col-xs-4">
-                                <div class="thumbnail">
+                                <div class="thumbnail thumbnail-product">
                                     <a href="<?= ImageHelper::url('/uploads/original/' . $image->filename, 1152, 864); ?>" data-lightbox="roadtrip">
-                                        <img src="<?= ImageHelper::url('/uploads/original/' . $image->filename, 200, 200, ['thumbnail' => true]); ?>" />
+                                        <img src="<?= ImageHelper::url('/uploads/original/' . $image->filename, 200, 75, ['thumbnail' => true]); ?>" />
                                     </a>
                                 </div>
                             </div>
