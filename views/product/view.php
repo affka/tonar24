@@ -42,6 +42,16 @@ $this->params['breadcrumbs'][] = $product->name;
                 </div>
             </div>
             <div class="col-xs-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Скачать</div>
+                    <div class="panel-body">
+                        <ul>
+                            <?php foreach ($product->files as $file) { ?>
+                                <li><a href="/uploads/files/<?= $file->filename ?>"><?= $file->name ?></a></li>
+                            <?php } ?>
+                        </ul>
+                    </div>
+                </div>
                 <?= $product->description; ?>
             </div>
             <div class="col-xs-12">

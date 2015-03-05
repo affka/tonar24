@@ -4,6 +4,7 @@ namespace app\commands;
 use app\models\ProductComplAdd;
 use app\models\ProductComplMain;
 use app\models\Dealer;
+use app\models\ProductFiles;
 use app\models\ProductImages;
 use app\models\ProductProperties;
 use app\models\Products;
@@ -218,6 +219,7 @@ class TonarController extends Controller
             $shortDesc = html_entity_decode(trim($item->parent()->find('.list_element_text', 0)->text()));
             $product = $this->getProductInfo($category, $item->href, $shortDesc);
             $this->getCosts($product, $item->href);
+            $this->downloadFiles($product, $item->href);
             $products[] = $product;
         }
 
@@ -340,6 +342,37 @@ class TonarController extends Controller
             if (!$model->save()) {
                 var_dump($model->getErrors());
                 throw new Exception('Не удалось сохранить доп. комплектацию у товара ' . $product->id);
+            }
+        }
+    }
+
+    /**
+     * Скачает файлы из блока "скачать".
+     * @param $product
+     * @param $url
+     */
+    private function downloadFiles(&$product, $url)
+    {
+        $root = SimpleHTMLDom::file_get_html(self::BASE_URL . $url);
+
+        foreach ($root->find('.download_item') as $item) {
+            $a = $item->find('a', 0);
+            $href = self::BASE_URL . $a->href;
+            $parseKey = sha1($href);
+
+            //  Если уже файл есть в базе, то не сохраняем его.
+            if (ProductFiles::findOne(['parse_key' => $parseKey])) {
+                return;
+            }
+
+            $model = new ProductFiles;
+            $model->product_id = $product->id;
+            $model->filename = $href;
+            $model->name = trim($a->find('span', 0)->text());
+            $model->parse_key = $parseKey;
+            if (!$model->save()) {
+                var_dump($model->getErrors());
+                throw new Exception('Не удалось сохранить файл товара ' . $product->id);
             }
         }
     }
