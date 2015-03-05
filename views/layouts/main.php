@@ -55,16 +55,6 @@ AppAsset::register($this);
         ]);
         NavBar::end();
     ?>
-
-    <?= Breadcrumbs::widget([
-        'itemTemplate'=>"<li>{link} > </li>",
-        'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        'homeLink' => [
-            'label' => 'Главная',
-            'url' => Yii::$app->getHomeUrl(),
-            'itemprop' => 'url',
-        ],
-    ]); ?>
 </header>
 
 <?= $content ?>

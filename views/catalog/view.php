@@ -9,13 +9,13 @@ $this->params['breadcrumbs'][] = $model->name;
 ?>
 
 <div class="container">
-    <aside class="col-xs-4 catalog-menu">
+    <aside class="col-xs-3 catalog-menu">
         <h2>Каталог</h2>
         <?= \app\widgets\LeftMenu::widget([
             'currentCategory' => $model,
         ]); ?>
     </aside>
-    <section class="col-xs-8">
+    <section class="col-xs-9">
         <?= $model->description; ?>
         <div class="row">
             <?php /** @var \app\models\Products $item */ ?>

@@ -28,6 +28,7 @@ header .navbar {
   border-radius: 0;
   border-left: none;
   border-right: none;
+  margin-bottom: 0;
 }
 header .navbar .navbar-collapse {
   padding: 0;
@@ -52,17 +53,6 @@ header .navbar .navbar-collapse {
   transition-property: background;
   transition-duration: 0.3s;
 }
-.catalog-menu ul a:after {
-  position: absolute;
-  content: '';
-  border-style: solid;
-  transition-duration: 0.3s;
-  transition-property: border right;
-  top: -1px;
-  right: -10px;
-  border-width: 16px 0 16px 10px;
-  border-color: transparent transparent transparent #fff;
-}
 .catalog-menu ul a:hover {
   background-color: #eee;
   text-decoration: none;
@@ -73,12 +63,8 @@ header .navbar .navbar-collapse {
 .catalog-menu ul li.active > a {
   background-color: #e6e9f0;
 }
-.catalog-menu ul li.active > a:after {
-  border-color: transparent transparent transparent #e6e9f0;
-}
 .service-map {
   position: relative;
-  margin-top: -20px;
 }
 .service-map #YMapsID {
   width: 100%;
@@ -143,7 +129,48 @@ header .navbar .navbar-collapse {
   line-height: 16px;
   overflow: hidden;
 }
-.thumbnail-product a {
+.product-links-panel {
+  margin-top: 10px;
+}
+.product-links-panel ul {
+  margin-bottom: 0;
+}
+.product-properties tr:first-child td {
+  border-top: none;
+}
+.product-details .product-details-item {
+  position: relative;
+  margin-top: 10px;
+  min-height: 100px;
+}
+.product-details .product-details-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.product-details .product-details-description {
+  padding: 10px 0 0 115px;
+  box-sizing: border-box;
+}
+.product-description {
+  margin-top: 10px;
+}
+.product-thumbnail-main {
+  width: 100%;
+  max-width: 450px;
+}
+.product-thumbnail-main img {
+  width: 100%;
+}
+.product-thumbnail {
+  float: left;
+  position: relative;
+  margin: 0 10px 10px 0;
+}
+.product-thumbnail a img {
+  width: 75px;
   height: 75px;
-  display: inline-block;
+}
+.contact blockquote {
+  width: 50%;
 }

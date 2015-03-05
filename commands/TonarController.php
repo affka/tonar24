@@ -47,6 +47,9 @@ class TonarController extends Controller
 
     /**
      * Запуск.
+     * @param bool $flush
+     * @throws Exception
+     * @throws \yii\db\Exception
      */
     public function actionIndex($flush = false)
     {

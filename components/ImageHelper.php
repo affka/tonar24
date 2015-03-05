@@ -108,7 +108,7 @@ class ImageHelper
 
         try {
             $image
-                ->thumbnail(new \Imagine\Image\Box($width, $height))
+                ->thumbnail(new \Imagine\Image\Box($width, $height), ImageInterface::THUMBNAIL_OUTBOUND)
                 ->save($destinationPath);
         } catch (\RuntimeException $e) {
             throw new HttpException($e->getCode(), $e->getMessage());
