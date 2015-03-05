@@ -13,6 +13,7 @@ use yii\console\Controller;
 use serhatozles\simplehtmldom\SimpleHTMLDom;
 use app\models\Categories;
 use yii\console\Exception;
+use yii\db\Query;
 use yii\helpers\FileHelper;
 
 /**
@@ -50,12 +51,14 @@ class TonarController extends Controller
     public function actionIndex($flush = false)
     {
         if ($flush) {
-            Categories::deleteAll();
-            ProductComplAdd::deleteAll();
-            ProductComplMain::deleteAll();
-            ProductImages::deleteAll();
-            ProductProperties::deleteAll();
-            Products::deleteAll();
+            \Yii::$app->db->createCommand('DELETE FROM categories')->execute();
+            \Yii::$app->db->createCommand('DELETE FROM products')->execute();
+            \Yii::$app->db->createCommand('DELETE FROM product_compl_add')->execute();
+            \Yii::$app->db->createCommand('DELETE FROM product_compl_main')->execute();
+            \Yii::$app->db->createCommand('DELETE FROM product_files')->execute();
+            \Yii::$app->db->createCommand('DELETE FROM product_images')->execute();
+            \Yii::$app->db->createCommand('DELETE FROM product_parts')->execute();
+            \Yii::$app->db->createCommand('DELETE FROM product_properties')->execute();
 
             $uploadDir = \Yii::$app->getBasePath() . '/web/uploads';
             static::removeDirectory($uploadDir . '/original');

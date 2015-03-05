@@ -6,6 +6,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\console\Exception;
 use yii\db\ActiveRecord;
+use yii\helpers\StringHelper;
 
 /**
  * This is the model class for table "products".
@@ -197,20 +198,12 @@ class Products extends \yii\db\ActiveRecord
      */
     private function saveImages()
     {
-        if (!count($this->productImages)) {
-            return;
-        }
+        $this->productImages = array_unique($this->productImages);
 
         foreach ($this->productImages as $image) {
-            $parseKey = sha1($image);
-            if (ProductImages::findOne(['parse_key' => $parseKey])) {
-                continue;
-            }
-
             $model = new ProductImages;
             $model->product_id = $this->id;
-            $model->filename = md5(time()) . '.' . pathinfo($image, PATHINFO_EXTENSION);
-            $model->parse_key = $parseKey;
+            $model->filename = md5($image) . '.' . strtolower(pathinfo($image, PATHINFO_EXTENSION));
 
             $uploadDir = Yii::$app->getBasePath() . '/web/uploads/original';
             if (!is_dir($uploadDir)) {
@@ -231,10 +224,6 @@ class Products extends \yii\db\ActiveRecord
      */
     private function saveProperties()
     {
-        if (!count($this->productProperties)) {
-            return;
-        }
-
         foreach ($this->productProperties as $property) {
             $model = new ProductProperties;
             $model->product_id = $this->id;
