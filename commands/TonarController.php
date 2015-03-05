@@ -87,13 +87,14 @@ class TonarController extends Controller
         $codeItems = [];
         $index = 0;
         while (true) {
-            $index = mb_strpos($input, $startString, $index + 1);
+            $index = strpos($input, $startString, $index + 1);
+            echo $index . ' ';
             if ($index === false) {
                 break;
             }
 
-            $endIndex = mb_strpos($input, $endString, $index);
-            $codeItems[] = mb_substr($input, $index + mb_strlen($startString), $endIndex - $index - mb_strlen($startString));
+            $endIndex = strpos($input, $endString, $index);
+            $codeItems[] = substr($input, $index + strlen($startString), $endIndex - $index - strlen($startString));
             $index = $endIndex;
         }
 
@@ -105,13 +106,13 @@ class TonarController extends Controller
 
             $lastSavedIndex = 0;
             $openedChar = null;
-            for ($index = 0; $index < mb_strlen($code); $index++) {
+            for ($index = 0; $index < strlen($code); $index++) {
                 $char = $code[$index];
 
                 switch ($char) {
                     case ',':
                         if ($openedChar === null) {
-                            $item[] = trim(mb_substr($code, $lastSavedIndex, $index - $lastSavedIndex), " \t\n\r\0\x0B\"'");
+                            $item[] = trim(substr($code, $lastSavedIndex, $index - $lastSavedIndex), " \t\n\r\0\x0B\"'");
                             $lastSavedIndex = $index + 1;
                         }
                         break;
@@ -129,10 +130,11 @@ class TonarController extends Controller
                 }
             }
 
-            $item[] = trim(mb_substr($code, $lastSavedIndex), " \t\n\r\0\x0B\"'");
+            $item[] = trim(substr($code, $lastSavedIndex), " \t\n\r\0\x0B\"'");
 
             list ($geoPointX, $geoPointY, $name, $description, $address, $phone, $siteUrl, $detailUrl, $tonarId, $city) = $item;
-            $geoPointX = preg_replace('/.*[^0-9.]([0-9.]+)$/', '$1', $geoPointX);
+            $geoPointX = trim(preg_replace('/[^0-9.]/', '', $geoPointX), '.');
+            $geoPointY = preg_replace('/[^0-9.]/', '', $geoPointY);
             $name = html_entity_decode($name);
             $description = html_entity_decode($description);
 
@@ -151,7 +153,7 @@ class TonarController extends Controller
                 'city' => $city,
             ]);
             if (!$model->save()) {
-                var_dump($model->getErrors());
+                var_dump($model->getErrors(), $geoPointX, $geoPointY, $name, $description, $address, $phone, $siteUrl, $detailUrl, $tonarId, $city);
             }
         }
 
