@@ -4,11 +4,14 @@ namespace app\commands;
 use app\models\ProductComplAdd;
 use app\models\ProductComplMain;
 use app\models\Dealer;
+use app\models\ProductImages;
+use app\models\ProductProperties;
 use app\models\Products;
 use yii\console\Controller;
 use serhatozles\simplehtmldom\SimpleHTMLDom;
 use app\models\Categories;
 use yii\console\Exception;
+use yii\helpers\FileHelper;
 
 /**
  * Команда парсинга сайта tonar.info
@@ -20,11 +23,43 @@ class TonarController extends Controller
      */
     const BASE_URL = 'http://www.tonar.info';
 
+    public static function removeDirectory($dir)
+    {
+        if (!($handle = opendir($dir))) {
+            return;
+        }
+        while (($file = readdir($handle)) !== false) {
+            if ($file[0] === '.') { // Skip hidden files and current/parent dir
+                continue;
+            }
+            $path = $dir . DIRECTORY_SEPARATOR . $file;
+            if (is_dir($path)) {
+                static::removeDirectory($path);
+            } else {
+                unlink($path);
+            }
+        }
+        closedir($handle);
+    }
+
     /**
      * Запуск.
      */
-    public function actionIndex()
+    public function actionIndex($flush = false)
     {
+        if ($flush) {
+            Categories::deleteAll();
+            ProductComplAdd::deleteAll();
+            ProductComplMain::deleteAll();
+            ProductImages::deleteAll();
+            ProductProperties::deleteAll();
+            Products::deleteAll();
+
+            $uploadDir = \Yii::$app->getBasePath() . '/web/uploads';
+            static::removeDirectory($uploadDir . '/original');
+            static::removeDirectory($uploadDir . '/resized');
+        }
+
         $root = SimpleHTMLDom::file_get_html(self::BASE_URL . '/catalog/');
         foreach ($root->find('.aside1 a') as $a) {
             $rootCategory = null;
@@ -81,7 +116,11 @@ class TonarController extends Controller
         }
     }
 
-    public function actionDealers() {
+    public function actionDealers($flush=fale) {
+        if ($flush) {
+            Dealer::deleteAll();
+        }
+
         $input = file_get_contents(self::BASE_URL . '/service-spares/service/service-map/');
         $startString = 'group.add(createPlacemark(';
         $endString = '));';
