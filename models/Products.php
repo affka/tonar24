@@ -143,6 +143,24 @@ class Products extends \yii\db\ActiveRecord
     }
 
     /**
+     * Связь с таблицей product_compl_main.
+     * @return \yii\db\ActiveQuery
+     */
+    public function getComplMain()
+    {
+        return $this->hasMany(ProductComplMain::className(), ['product_id' => 'id']);
+    }
+
+    /**
+     * Связь с таблицей product_compl_add.
+     * @return \yii\db\ActiveQuery
+     */
+    public function getComplAdd()
+    {
+        return $this->hasMany(ProductComplAdd::className(), ['product_id' => 'id']);
+    }
+
+    /**
      * Вернет модель первого изображения для этого товара.
      * @return string
      */

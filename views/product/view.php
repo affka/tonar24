@@ -58,7 +58,49 @@ $this->params['breadcrumbs'][] = $product->name;
                 </table>
             </div>
             <div class="tab-pane" id="costsTab">
-                s
+                <h3>Основная комплектация</h3>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Модель</th>
+                        <th>Описание</th>
+                        <th>ССУ</th>
+                        <th>Цена с НДС</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($product->complMain as $model) { ?>
+                            <tr>
+                                <td><?= $model->model ?></td>
+                                <td><?= $model->description ?></td>
+                                <td><?= $model->ccy ?></td>
+                                <td><?= $model->cost ?></td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+
+                <?php if (count($product->complAdd)) { ?>
+                    <h3>Дополнительные опции</h3>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Фото</th>
+                            <th>Цена</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($product->complAdd as $model) { ?>
+                                <tr>
+                                    <td><?= $model->name ?></td>
+                                    <td><?= ImageHelper::img('/uploads/original/' . $model->image, 100, 100, ['thumbnail' => true]); ?></td>
+                                    <td><?= $model->cost ?></td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                <?php } ?>
             </div>
         </div>
     </div>

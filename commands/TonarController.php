@@ -1,6 +1,9 @@
 <?php
 namespace app\commands;
 
+use app\models\ProductComplAdd;
+use app\models\ProductComplMain;
+use app\models\ProductCosts;
 use app\models\Products;
 use yii\console\Controller;
 use serhatozles\simplehtmldom\SimpleHTMLDom;
@@ -91,7 +94,9 @@ class TonarController extends Controller
         $products = [];
         foreach ($root->find('.catalog-section-item-img') as $item) {
             $shortDesc = html_entity_decode(trim($item->parent()->find('.list_element_text', 0)->text()));
-            $products[] = $this->getProductInfo($category, $item->href, $shortDesc);
+            $product = $this->getProductInfo($category, $item->href, $shortDesc);
+            $this->getCosts($product, $item->href);
+            $products[] = $product;
         }
 
         return $products;
@@ -155,5 +160,65 @@ class TonarController extends Controller
         }
 
         return $product;
+    }
+
+    /**
+     * Вернет цены.
+     * @param $product
+     * @param $url
+     */
+    private function getCosts(&$product, $url)
+    {
+        $root = SimpleHTMLDom::file_get_html(self::BASE_URL . $url);
+
+        //  Удаляем все.
+        $models = ProductComplMain::findAll(['product_id' => $product->id]);
+        foreach ($models as $model) {
+            $model->delete();
+        }
+        $models = ProductComplAdd::findAll(['product_id' => $product->id]);
+        foreach ($models as $model) {
+            $model->delete();
+        }
+
+        //  Основная комплектация.
+        foreach ($root->find('.card_prices_body', 0)->find('tr') as $k => $tr) {
+            if ($k == 0) {
+                continue;
+            }
+
+            $model = new ProductComplMain;
+            $model->product_id = $product->id;
+            $model->model = $tr->find('td', 0)->text();
+            $model->description = $tr->find('td', 1)->text();
+            if ($tr->find('td', 3)) {
+                $model->ccy = $tr->find('td', 2)->text();
+                $model->cost = $tr->find('td', 3)->text();
+            }
+            else {
+                $model->cost = $tr->find('td', 2)->text();
+            }
+            if (!$model->save()) {
+                var_dump($model->getErrors());
+                throw new Exception('Не удалось сохранить основную комплектацию у товара ' . $product->id);
+            }
+        }
+
+        //  Доп. комплектация.
+        foreach ($root->find('.card_prices_body', 1)->find('tr') as $k => $tr) {
+            if ($k == 0) {
+                continue;
+            }
+
+            $model = new ProductComplAdd;
+            $model->product_id = $product->id;
+            $model->name = $tr->find('td', 0)->text();
+            $model->complImage = self::BASE_URL . $tr->find('td', 1)->find('a', 0)->href;
+            $model->cost = $tr->find('td', 2)->text();
+            if (!$model->save()) {
+                var_dump($model->getErrors());
+                throw new Exception('Не удалось сохранить доп. комплектацию у товара ' . $product->id);
+            }
+        }
     }
 }
