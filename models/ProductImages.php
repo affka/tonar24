@@ -29,7 +29,7 @@ class ProductImages extends \yii\db\ActiveRecord
         return [
             [['product_id', 'filename'], 'required'],
             [['product_id'], 'integer'],
-            [['filename'], 'string', 'max' => 255]
+            [['filename', 'parse_key'], 'string', 'max' => 255]
         ];
     }
 

@@ -184,9 +184,15 @@ class Products extends \yii\db\ActiveRecord
         }
 
         foreach ($this->productImages as $image) {
+            $parseKey = sha1($image);
+            if (ProductImages::findOne(['parse_key' => $parseKey])) {
+                continue;
+            }
+
             $model = new ProductImages;
             $model->product_id = $this->id;
             $model->filename = md5(time()) . '.' . pathinfo($image, PATHINFO_EXTENSION);
+            $model->parse_key = $parseKey;
 
             $uploadDir = Yii::$app->getBasePath() . '/web/uploads/original';
             if (!is_dir($uploadDir)) {
