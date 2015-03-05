@@ -110,7 +110,10 @@ $this->params['breadcrumbs'][] = $product->name;
                                 <?php foreach ($product->complAdd as $model) { ?>
                                     <tr>
                                         <td><?= $model->name ?></td>
-                                        <td><?= ImageHelper::img('/uploads/original/' . $model->image, 100, 100, ['thumbnail' => true]); ?></td>
+                                        <td>
+                                            <a href="<?= ImageHelper::url('/uploads/original/' . $model->image, 1152, 864); ?>" data-lightbox="roadtrip<?= $model->id ?>">
+                                                <img src="<?= ImageHelper::url('/uploads/original/' . $model->image, 100, 100, ['thumbnail' => true]); ?>" />
+                                            </a>
                                         <td><?= $model->cost ?></td>
                                     </tr>
                                 <?php } ?>
