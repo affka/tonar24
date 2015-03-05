@@ -88,7 +88,6 @@ class TonarController extends Controller
         $index = 0;
         while (true) {
             $index = strpos($input, $startString, $index + 1);
-            echo $index . ' ';
             if ($index === false) {
                 break;
             }
