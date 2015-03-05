@@ -5,20 +5,23 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "product_files".
+ * This is the model class for table "product_parts".
  *
  * @property integer $id
  * @property integer $product_id
- * @property string $filename
+ * @property string $name
+ * @property string $description
+ * @property string $image
+ * @property string $parse_key
  */
-class ProductFiles extends \yii\db\ActiveRecord
+class ProductParts extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'product_files';
+        return 'product_parts';
     }
 
     /**
@@ -27,9 +30,10 @@ class ProductFiles extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['product_id', 'filename', 'parse_key', 'name'], 'required'],
+            [['product_id', 'parse_key'], 'required'],
             [['product_id'], 'integer'],
-            [['filename', 'parse_key', 'name'], 'string', 'max' => 255]
+            [['description'], 'string'],
+            [['name', 'image', 'parse_key'], 'string', 'max' => 255]
         ];
     }
 
@@ -41,7 +45,10 @@ class ProductFiles extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'product_id' => 'Product ID',
-            'filename' => 'Filename',
+            'name' => 'Name',
+            'description' => 'Description',
+            'image' => 'Image',
+            'parse_key' => 'Parse Key',
         ];
     }
 
@@ -51,15 +58,15 @@ class ProductFiles extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         //  Загружаем новые изображения.
-        $filename = md5(time()) . 'file.' . pathinfo($this->filename, PATHINFO_EXTENSION);
+        $filename = md5(time()) . 'part.' . pathinfo($this->image, PATHINFO_EXTENSION);
 
-        $uploadDir = Yii::$app->getBasePath() . '/web/uploads/files';
+        $uploadDir = Yii::$app->getBasePath() . '/web/uploads/original';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0775, true);
         }
 
         //  Качаем файл.
-        $this->filename = $this->download($this->filename, $uploadDir . '/' . $filename);
+        $this->image = $this->download($this->image, $uploadDir . '/' . $filename);
 
         return parent::beforeSave($insert);
     }

@@ -170,6 +170,15 @@ class Products extends \yii\db\ActiveRecord
     }
 
     /**
+     * Связь с таблицей product_parts.
+     * @return \yii\db\ActiveQuery
+     */
+    public function getParts()
+    {
+        return $this->hasMany(ProductParts::className(), ['product_id' => 'id']);
+    }
+
+    /**
      * Вернет модель первого изображения для этого товара.
      * @return string
      */

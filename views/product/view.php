@@ -59,6 +59,7 @@ $this->params['breadcrumbs'][] = $product->name;
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#techTab" aria-controls="home" role="tab" data-toggle="tab">Технические характеристики</a></li>
                     <li><a href="#costsTab" aria-controls="profile" role="tab" data-toggle="tab">Цены</a></li>
+                    <li><a href="#partsTab" aria-controls="profile" role="tab" data-toggle="tab">Детали</a></li>
                 </ul>
 
                 <!-- Tab panes -->
@@ -119,6 +120,21 @@ $this->params['breadcrumbs'][] = $product->name;
                                 <?php } ?>
                                 </tbody>
                             </table>
+                        <?php } ?>
+                    </div>
+                    <div class="tab-pane" id="partsTab">
+                        <?php foreach ($product->parts as $model) { ?>
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <a href="<?= ImageHelper::url('/uploads/original/' . $model->image, 1152, 864); ?>" data-lightbox="part<?= $model->id ?>">
+                                    <img src="<?= ImageHelper::url('/uploads/original/' . $model->image, 100, 100, ['thumbnail' => true]); ?>" />
+                                </a>
+                            </div>
+                            <div class="col-xs-8">
+                                <strong><?= $model->name ?></strong><br/>
+                                <p><?= $model->description ?></p>
+                            </div>
+                        </div>
                         <?php } ?>
                     </div>
                 </div>

@@ -6,6 +6,7 @@ use app\models\ProductComplMain;
 use app\models\Dealer;
 use app\models\ProductFiles;
 use app\models\ProductImages;
+use app\models\ProductParts;
 use app\models\ProductProperties;
 use app\models\Products;
 use yii\console\Controller;
@@ -219,6 +220,7 @@ class TonarController extends Controller
             $shortDesc = html_entity_decode(trim($item->parent()->find('.list_element_text', 0)->text()));
             $product = $this->getProductInfo($category, $item->href, $shortDesc);
             $this->getCosts($product, $item->href);
+            $this->getParts($product, $item->href);
             $this->downloadFiles($product, $item->href);
             $products[] = $product;
         }
@@ -342,6 +344,43 @@ class TonarController extends Controller
             if (!$model->save()) {
                 var_dump($model->getErrors());
                 throw new Exception('Не удалось сохранить доп. комплектацию у товара ' . $product->id);
+            }
+        }
+    }
+
+    /**
+     * Вернет детали.
+     * @param $product
+     * @param $url
+     */
+    private function getParts(&$product, $url)
+    {
+        $root = SimpleHTMLDom::file_get_html(self::BASE_URL . $url);
+
+        //  Удаляем все.
+        $models = ProductParts::findAll(['product_id' => $product->id]);
+        foreach ($models as $model) {
+            $model->delete();
+        }
+
+        foreach ($root->find('a.zapchasti') as $a) {
+            $parseKey = sha1($a->href);
+            if (ProductParts::findOne(['parse_key' => $parseKey])) {
+                continue;
+            }
+
+            $domItem = SimpleHTMLDom::file_get_html(self::BASE_URL . $a->href);
+            $name = $domItem->find('.zapchast-name', 0);
+
+            $model = new ProductParts;
+            $model->product_id = $product->id;
+            $model->name = isset($name) ? trim($name->text()) : '';
+            $model->description = trim(str_replace($model->name, '', $domItem->find('.zapchast-body', 0)->text()));
+            $model->image = self::BASE_URL . $domItem->find('img', 0)->src;
+            $model->parse_key = $parseKey;
+            if (!$model->save()) {
+                var_dump($model->getErrors());
+                throw new Exception('Не удалось сохранить основную комплектацию у товара ' . $product->id);
             }
         }
     }
