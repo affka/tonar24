@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $model->name;
     <?php foreach ($model->items as $item) { ?>
         <div class="col-sm-6 col-md-4">
             <div class="thumbnail thumbnail-product">
-                <a href="<?= \yii\helpers\Url::to(['/product/view', 'slug' => $item->slug]) ?>"><?= ImageHelper::img($item->getFirstImage(), 300, 132, ['thumbnail' => true]); ?></a>
+                <a href="<?= \yii\helpers\Url::to(['/product/view', 'slug' => $item->slug]) ?>" class="catalog-img"><?= ImageHelper::img($item->getFirstImage(), 300, 132, ['thumbnail' => true]); ?></a>
                 <div class="caption">
                     <a href="<?= \yii\helpers\Url::to(['/product/view', 'slug' => $item->slug]) ?>"><?= $item->name ?></a>
                     <p><?= $item->description_short ?></p>

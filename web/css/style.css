@@ -85,8 +85,12 @@ header .navbar .navbar-collapse {
 .thumbnail-product a {
   font-weight: bold;
 }
+.thumbnail-product a.catalog-img {
+  height: 114px;
+  display: inline-block;
+}
 .thumbnail-product p {
-  height: 60px;
+  height: 64px;
   line-height: 16px;
   overflow: hidden;
 }
