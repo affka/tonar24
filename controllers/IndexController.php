@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Dealer;
 use Yii;
 use yii\web\Controller;
 
@@ -23,6 +24,16 @@ class IndexController extends Controller
     {
         $this->getView()->title = 'Контактная информация';
         return $this->render('contact');
+    }
+
+    /**
+     * Отображение ошибки на сайте.
+     */
+    public function actionServiceMap()
+    {
+        return $this->render('service-map', [
+            'dealerModels' => Dealer::find()->all(),
+        ]);
     }
 
     /**

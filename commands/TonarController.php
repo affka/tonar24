@@ -3,7 +3,7 @@ namespace app\commands;
 
 use app\models\ProductComplAdd;
 use app\models\ProductComplMain;
-use app\models\ProductCosts;
+use app\models\Dealer;
 use app\models\Products;
 use yii\console\Controller;
 use serhatozles\simplehtmldom\SimpleHTMLDom;
@@ -78,6 +78,89 @@ class TonarController extends Controller
             }
 
             $this->getProducts($category, $a->href);
+        }
+    }
+
+    public function actionDealers() {
+        $input = file_get_contents(self::BASE_URL . '/service-spares/service/service-map/');
+        $startString = 'group.add(createPlacemark(';
+        $endString = '));';
+
+        $codeItems = [];
+        $index = 0;
+        while (true) {
+            $index = strpos($input, $startString, $index + 1);
+            if ($index === false) {
+                break;
+            }
+
+            $endIndex = strpos($input, $endString, $index);
+            $codeItems[] = substr($input, $index + strlen($startString), $endIndex - $index - strlen($startString));
+            $index = $endIndex;
+        }
+
+        $tonarIds = [];
+
+        // Split by `,`
+        foreach ($codeItems as $code) {
+            $item = [];
+
+            $lastSavedIndex = 0;
+            $openedChar = null;
+            for ($index = 0; $index < strlen($code); $index++) {
+                $char = $code[$index];
+
+                switch ($char) {
+                    case ',':
+                        if ($openedChar === null) {
+                            $item[] = trim(substr($code, $lastSavedIndex, $index - $lastSavedIndex), " \t\n\r\0\x0B\"'");
+                            $lastSavedIndex = $index + 1;
+                        }
+                        break;
+
+                    case '"':
+                    case "'":
+                        if ($code[$index-1] !== '\\') {
+                            if ($openedChar === $char) {
+                                $openedChar = null;
+                            } else if ($openedChar === null) {
+                                $openedChar = $char;
+                            }
+                        }
+                        break;
+                }
+            }
+
+            $item[] = trim(substr($code, $lastSavedIndex), " \t\n\r\0\x0B\"'");
+
+            list ($geoPointX, $geoPointY, $name, $description, $address, $phone, $siteUrl, $detailUrl, $tonarId, $city) = $item;
+            $geoPointX = trim(preg_replace('/[^0-9.]/', '', $geoPointX), '.');
+            $geoPointY = preg_replace('/[^0-9.]/', '', $geoPointY);
+            $name = html_entity_decode($name);
+            $description = html_entity_decode($description);
+
+            $tonarIds[] = (int) $tonarId;
+
+            $model = Dealer::findOne(['tonarId' => (int) $tonarId]) ?: new Dealer();
+            $model->setAttributes([
+                'geoPointX' => $geoPointX,
+                'geoPointY' => $geoPointY,
+                'name' => $name,
+                'description' => $description,
+                'address' => $address,
+                'phone' => $phone,
+                'siteUrl' => $siteUrl,
+                'tonarId' => $tonarId,
+                'city' => $city,
+            ]);
+            if (!$model->save()) {
+                var_dump($model->getErrors(), $geoPointX, $geoPointY, $name, $description, $address, $phone, $siteUrl, $detailUrl, $tonarId, $city);
+            }
+        }
+
+        // Remove old items
+        if (count($tonarIds) > 0) {
+            Dealer::deleteAll(['not in', 'tonarId', $tonarIds]);
         }
     }
 

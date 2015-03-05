@@ -11,6 +11,9 @@ use app\models\Categories;
  */
 class LeftMenu extends \yii\base\Widget
 {
+
+    public $currentCategory;
+
     /**
      * Запуск виджета.
      */
