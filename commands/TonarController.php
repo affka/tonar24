@@ -51,14 +51,14 @@ class TonarController extends Controller
     public function actionIndex($flush = false)
     {
         if ($flush) {
-            \Yii::$app->db->createCommand('DELETE FROM categories')->execute();
-            \Yii::$app->db->createCommand('DELETE FROM products')->execute();
-            \Yii::$app->db->createCommand('DELETE FROM product_compl_add')->execute();
-            \Yii::$app->db->createCommand('DELETE FROM product_compl_main')->execute();
-            \Yii::$app->db->createCommand('DELETE FROM product_files')->execute();
-            \Yii::$app->db->createCommand('DELETE FROM product_images')->execute();
-            \Yii::$app->db->createCommand('DELETE FROM product_parts')->execute();
-            \Yii::$app->db->createCommand('DELETE FROM product_properties')->execute();
+            \Yii::$app->db->createCommand('TRUNCATE categories')->execute();
+            \Yii::$app->db->createCommand('TRUNCATE products')->execute();
+            \Yii::$app->db->createCommand('TRUNCATE product_compl_add')->execute();
+            \Yii::$app->db->createCommand('TRUNCATE product_compl_main')->execute();
+            \Yii::$app->db->createCommand('TRUNCATE product_files')->execute();
+            \Yii::$app->db->createCommand('TRUNCATE product_images')->execute();
+            \Yii::$app->db->createCommand('TRUNCATE product_parts')->execute();
+            \Yii::$app->db->createCommand('TRUNCATE product_properties')->execute();
 
             $uploadDir = \Yii::$app->getBasePath() . '/web/uploads';
             static::removeDirectory($uploadDir . '/original');
