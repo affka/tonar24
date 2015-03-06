@@ -376,13 +376,19 @@ class TonarController extends Controller
             }
 
             $domItem = SimpleHTMLDom::file_get_html(self::BASE_URL . $a->href);
+            if (!isset($domItem)) {
+                continue;
+            }
+
             $name = $domItem->find('.zapchast-name', 0);
+            $body = $domItem->find('.zapchast-body', 0);
+            $img = $domItem->find('img', 0);
 
             $model = new ProductParts;
             $model->product_id = $product->id;
             $model->name = isset($name) ? trim($name->text()) : '';
-            $model->description = trim(str_replace($model->name, '', $domItem->find('.zapchast-body', 0)->text()));
-            $model->image = self::BASE_URL . $domItem->find('img', 0)->src;
+            $model->description = isset($body) ? trim(str_replace($model->name, '', $body->text())) : '';
+            $model->image = isset($img) ? (self::BASE_URL . $img->src) : '';
             $model->parse_key = $parseKey;
             if (!$model->save()) {
                 var_dump($model->getErrors());

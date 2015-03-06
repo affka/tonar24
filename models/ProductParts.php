@@ -78,6 +78,10 @@ class ProductParts extends \yii\db\ActiveRecord
      */
     private function download($url, $file)
     {
+        if (!$file || !$url) {
+            return '';
+        }
+
         file_put_contents($file, file_get_contents($url));
         return basename($file);
     }
