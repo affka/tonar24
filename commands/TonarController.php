@@ -57,6 +57,7 @@ class TonarController extends Controller
             \Yii::$app->db->createCommand('TRUNCATE product_files')->execute();
             \Yii::$app->db->createCommand('TRUNCATE product_images')->execute();
             \Yii::$app->db->createCommand('TRUNCATE product_parts')->execute();
+            \Yii::$app->db->createCommand('TRUNCATE product_parts_junction')->execute();
             \Yii::$app->db->createCommand('TRUNCATE product_properties')->execute();
 
             $uploadDir = \Yii::$app->getBasePath() . '/web/uploads';
