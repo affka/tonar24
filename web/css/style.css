@@ -112,22 +112,24 @@ header .navbar .navbar-collapse {
 }
 .thumbnail {
   border: none;
+  margin-bottom: 5px;
 }
 .thumbnail-catalog img {
-  height: 132px;
+  height: 165px;
 }
 .thumbnail-catalog a {
   display: inline-block;
-  height: 42px;
   font-weight: bold;
+  padding-bottom: 5px;
 }
 .thumbnail-catalog a.catalog-img {
-  height: 108px;
+  height: 160px;
 }
 .thumbnail-catalog p {
-  height: 68px;
+  height: 50px;
   line-height: 16px;
   overflow: hidden;
+  margin-bottom: 0;
 }
 .product-links-panel {
   margin-top: 10px;
@@ -154,6 +156,7 @@ header .navbar .navbar-collapse {
 }
 .product-description {
   margin-top: 10px;
+  margin-bottom: 10px;
 }
 .product-thumbnail-main {
   width: 100%;
@@ -173,4 +176,11 @@ header .navbar .navbar-collapse {
 }
 .contact blockquote {
   width: 50%;
+}
+#index-slider {
+  width: 707px;
+  margin: 20px auto;
+}
+#index-slider .carousel-caption {
+  display: none;
 }

@@ -41,18 +41,20 @@ $this->params['breadcrumbs'][] = $product->name;
                         <?php } ?>
                     <?php } ?>
                 </div>
-                <div class="row">
-                    <div class="panel panel-default product-links-panel">
-                        <div class="panel-heading">Документы</div>
-                        <div class="panel-body">
-                            <ul>
-                                <?php foreach ($product->files as $file) { ?>
-                                    <li><a href="/uploads/files/<?= $file->filename ?>"><?= $file->name ?></a></li>
-                                <?php } ?>
-                            </ul>
+                <?php if (count($product->files) > 0) { ?>
+                    <div class="row">
+                        <div class="panel panel-default product-links-panel">
+                            <div class="panel-heading">Документы</div>
+                            <div class="panel-body">
+                                <ul>
+                                    <?php foreach ($product->files as $file) { ?>
+                                        <li><a href="/uploads/files/<?= $file->filename ?>"><?= $file->name ?></a></li>
+                                    <?php } ?>
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                </div>
+                <?php } ?>
             </div>
         </div>
 
@@ -78,7 +80,7 @@ $this->params['breadcrumbs'][] = $product->name;
                     </table>
                 </div>
                 <div class="tab-pane product-price" id="costsTab">
-                    <h3>Основная комплектация</h3>
+                    <h3>Базовая комплектация</h3>
                     <table class="table">
                         <thead>
                         <tr>

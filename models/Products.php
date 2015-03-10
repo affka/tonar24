@@ -176,6 +176,9 @@ class Products extends \yii\db\ActiveRecord
      */
     public function getParts()
     {
+        return $this->hasMany(ProductParts::className(), ['id' => 'part_id'])
+            ->viaTable('product_parts_junction', ['product_id' => 'id']);
+
         return $this->hasMany(ProductParts::className(), ['product_id' => 'id']);
     }
 

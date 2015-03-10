@@ -8,7 +8,6 @@ use Yii;
  * This is the model class for table "product_parts".
  *
  * @property integer $id
- * @property integer $product_id
  * @property string $name
  * @property string $description
  * @property string $image
@@ -30,8 +29,7 @@ class ProductParts extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['product_id', 'parse_key'], 'required'],
-            [['product_id'], 'integer'],
+            [['parse_key'], 'required'],
             [['description'], 'string'],
             [['name', 'image', 'parse_key'], 'string', 'max' => 255]
         ];
@@ -44,7 +42,6 @@ class ProductParts extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'product_id' => 'Product ID',
             'name' => 'Name',
             'description' => 'Description',
             'image' => 'Image',
@@ -58,7 +55,7 @@ class ProductParts extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         //  Загружаем новые изображения.
-        $filename = md5(time()) . 'part.' . pathinfo($this->image, PATHINFO_EXTENSION);
+        $filename = md5(uniqid()) . 'part.' . strtolower(pathinfo($this->image, PATHINFO_EXTENSION));
 
         $uploadDir = Yii::$app->getBasePath() . '/web/uploads/original';
         if (!is_dir($uploadDir)) {

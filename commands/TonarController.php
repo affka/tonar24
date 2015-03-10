@@ -5,16 +5,12 @@ use app\models\ProductComplAdd;
 use app\models\ProductComplMain;
 use app\models\Dealer;
 use app\models\ProductFiles;
-use app\models\ProductImages;
 use app\models\ProductParts;
-use app\models\ProductProperties;
 use app\models\Products;
 use yii\console\Controller;
 use serhatozles\simplehtmldom\SimpleHTMLDom;
 use app\models\Categories;
 use yii\console\Exception;
-use yii\db\Query;
-use yii\helpers\FileHelper;
 
 /**
  * Команда парсинга сайта tonar.info
@@ -264,7 +260,7 @@ class TonarController extends Controller
         //  Основная информация.
         $product->name = trim(strip_tags($root->find('.card_title', 0)->innertext));
         $product->description = trim(strip_tags($root->find('.card_description', 0)->innertext));
-        $product->description = preg_replace('/[\s]{2,}/', ' ', $product->description);
+        //$product->description = preg_replace('/[\s]{2,}/', ' ', $product->description);
         $product->description_short = preg_replace('/[\s]{2,}/', ' ', $shortDesc);
         $product->category_id = $category->id;
         $product->parse_key = $parseKey;
@@ -345,8 +341,13 @@ class TonarController extends Controller
             $model = new ProductComplAdd;
             $model->product_id = $product->id;
             $model->name = $tr->find('td', 0)->text();
-            $model->complImage = self::BASE_URL . $tr->find('td', 1)->find('a', 0)->href;
+            $model->complImage = $tr->find('td', 1)->find('a', 0)->href;
             $model->cost = $tr->find('td', 2)->text();
+
+            if ($model->complImage) {
+                $model->complImage = self::BASE_URL . $model->complImage;
+            }
+
             if (!$model->save()) {
                 var_dump($model->getErrors());
                 throw new Exception('Не удалось сохранить доп. комплектацию у товара ' . $product->id);
@@ -356,22 +357,18 @@ class TonarController extends Controller
 
     /**
      * Вернет детали.
-     * @param $product
+     * @param Products $product
      * @param $url
      */
     private function getParts(&$product, $url)
     {
         $root = SimpleHTMLDom::file_get_html(self::BASE_URL . $url);
 
-        //  Удаляем все.
-        $models = ProductParts::findAll(['product_id' => $product->id]);
-        foreach ($models as $model) {
-            $model->delete();
-        }
-
         foreach ($root->find('a.zapchasti') as $a) {
             $parseKey = sha1($a->href);
-            if (ProductParts::findOne(['parse_key' => $parseKey])) {
+            if ($model = ProductParts::findOne(['parse_key' => $parseKey])) {
+
+                $product->link('parts', $model);
                 continue;
             }
 
@@ -385,7 +382,6 @@ class TonarController extends Controller
             $img = $domItem->find('img', 0);
 
             $model = new ProductParts;
-            $model->product_id = $product->id;
             $model->name = isset($name) ? trim($name->text()) : '';
             $model->description = isset($body) ? trim(str_replace($model->name, '', $body->text())) : '';
             $model->image = isset($img) ? (self::BASE_URL . $img->src) : '';
@@ -394,6 +390,8 @@ class TonarController extends Controller
                 var_dump($model->getErrors());
                 throw new Exception('Не удалось сохранить основную комплектацию у товара ' . $product->id);
             }
+
+            $product->link('parts', $model);
         }
     }
 
@@ -412,7 +410,7 @@ class TonarController extends Controller
             $parseKey = sha1($href);
 
             //  Если уже файл есть в базе, то не сохраняем его.
-            if (ProductFiles::findOne(['parse_key' => $parseKey])) {
+            if (ProductFiles::findOne(['parse_key' => $parseKey, 'product_id' => $product->id])) {
                 return;
             }
 

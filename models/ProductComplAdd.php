@@ -62,9 +62,9 @@ class ProductComplAdd extends \yii\db\ActiveRecord
     {
         //  Загружаем новые изображения.
         if (!empty($this->complImage)) {
-            $ext = pathinfo($this->complImage, PATHINFO_EXTENSION);
+            $ext = strtolower(pathinfo($this->complImage, PATHINFO_EXTENSION));
             if (in_array($ext, ['jpg', 'jpeg', 'png'])) {
-                $this->image = md5(time()) . 'cost.' . $ext;
+                $this->image = md5(uniqid()) . 'cost.' . $ext;
 
                 $uploadDir = Yii::$app->getBasePath() . '/web/uploads/original';
                 if (!is_dir($uploadDir)) {

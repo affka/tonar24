@@ -51,7 +51,7 @@ class ProductFiles extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         //  Загружаем новые изображения.
-        $filename = md5(time()) . 'file.' . pathinfo($this->filename, PATHINFO_EXTENSION);
+        $filename = md5(uniqid()) . 'file.' . strtolower(pathinfo($this->filename, PATHINFO_EXTENSION));
 
         $uploadDir = Yii::$app->getBasePath() . '/web/uploads/files';
         if (!is_dir($uploadDir)) {

@@ -143,24 +143,26 @@ header {
 
 .thumbnail {
     border: none;
+    margin-bottom: 5px;
 }
 
 .thumbnail-catalog {
     img {
-        height: 132px;
+        height: 165px;
     }
     a {
         &.catalog-img {
-            height: 108px;
+            height: 160px;
         }
         display: inline-block;
-        height: 42px;
         font-weight: bold;
+        padding-bottom: 5px;
     }
     p {
-        height: 68px;
+        height: 50px;
         line-height: 16px;
         overflow: hidden;
+        margin-bottom: 0;
     }
 }
 
@@ -198,6 +200,7 @@ header {
 
 .product-description {
     margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .product-thumbnail-main {
@@ -226,5 +229,15 @@ header {
 .contact {
     blockquote {
         width: 50%;
+    }
+}
+
+#index-slider {
+    width: 707px;
+    margin: 20px auto;
+
+    .carousel-caption {
+        //font-size: 2em;
+        display: none;
     }
 }
