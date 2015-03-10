@@ -190,10 +190,10 @@ class Products extends \yii\db\ActiveRecord
     {
         $image = ProductImages::findOne(['product_id' => $this->id]);
         if (!$image) {
-            return '';
+            return null;
         }
 
-        return '/uploads/original/' . $image->filename;
+        return $image;
     }
 
     /**
@@ -202,23 +202,29 @@ class Products extends \yii\db\ActiveRecord
     private function saveImages()
     {
         $this->productImages = array_unique($this->productImages);
+        $hashes = [];
 
         foreach ($this->productImages as $image) {
-            $model = new ProductImages;
+            $hash = ProductImages::generateHash($image);
+            $hashes[] = $hash;
+
+            $model = ProductImages::findOne(['hash' => $hash]) ?: new ProductImages;
             $model->product_id = $this->id;
-            $model->filename = md5($image) . '.' . strtolower(pathinfo($image, PATHINFO_EXTENSION));
-
-            $uploadDir = Yii::$app->getBasePath() . '/web/uploads/original';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0775, true);
-            }
-
-            //  Качаем файл.
-            $this->download($image, $uploadDir . '/' . $model->filename);
+            $model->hash = $hash;
+            $model->remoteUrl = $image;
 
             if (!$model->save()) {
                 throw new Exception('Не удалось сохранить изображение для товара ' . $this->id);
             }
+        }
+
+        // Remove not fined
+        $oldImages = ProductImages::find()
+            ->where(['product_id' => $this->id])
+            ->andWhere(['not in', 'hash', $hashes])
+            ->all();
+        foreach ($oldImages as $model) {
+            $model->delete();
         }
     }
 
@@ -237,15 +243,5 @@ class Products extends \yii\db\ActiveRecord
                 throw new Exception('Не удалось сохранить свойство для товара ' . $this->id);
             }
         }
-    }
-
-    /**
-     * Сохранит файл на диск.
-     * @param string $url
-     * @param string $file
-     */
-    private function download($url, $file)
-    {
-        file_put_contents($file, file_get_contents($url));
     }
 }

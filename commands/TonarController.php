@@ -24,6 +24,10 @@ class TonarController extends Controller
 
     public static function removeDirectory($dir)
     {
+        if (!is_dir($dir)) {
+            return;
+        }
+
         if (!($handle = opendir($dir))) {
             return;
         }
@@ -60,9 +64,7 @@ class TonarController extends Controller
             \Yii::$app->db->createCommand('TRUNCATE product_parts_junction')->execute();
             \Yii::$app->db->createCommand('TRUNCATE product_properties')->execute();
 
-            $uploadDir = \Yii::$app->getBasePath() . '/web/uploads';
-            static::removeDirectory($uploadDir . '/original');
-            static::removeDirectory($uploadDir . '/resized');
+            static::removeDirectory(\Yii::$app->getBasePath() . '/web/uploads');
         }
 
         $root = SimpleHTMLDom::file_get_html(self::BASE_URL . '/catalog/');
@@ -245,14 +247,7 @@ class TonarController extends Controller
 
         //  Если товар уже в базе, то вернем его модель.
         $parseKey = sha1($url);
-        $product = Products::findOne(['parse_key' => $parseKey]);
-        if ($product) {
-            //  Если нашли продукт, то ничего не делаем с ним.
-            return $product;
-        }
-        else {
-            $product = new Products;
-        }
+        $product = Products::findOne(['parse_key' => $parseKey]) ?: new Products();
 
         $root = SimpleHTMLDom::file_get_html(self::BASE_URL . $url);
         $images = [];
@@ -261,7 +256,6 @@ class TonarController extends Controller
         //  Основная информация.
         $product->name = trim(strip_tags($root->find('.card_title', 0)->innertext));
         $product->description = trim(strip_tags($root->find('.card_description', 0)->innertext));
-        //$product->description = preg_replace('/[\s]{2,}/', ' ', $product->description);
         $product->description_short = preg_replace('/[\s]{2,}/', ' ', $shortDesc);
         $product->category_id = $category->id;
         $product->parse_key = $parseKey;
@@ -296,29 +290,22 @@ class TonarController extends Controller
      * @param $product
      * @param $url
      */
-    private function getCosts(&$product, $url)
+    private function getCosts($product, $url)
     {
         $root = SimpleHTMLDom::file_get_html(self::BASE_URL . $url);
 
-        //  Удаляем все.
-        $models = ProductComplMain::findAll(['product_id' => $product->id]);
-        foreach ($models as $model) {
-            $model->delete();
-        }
-        $models = ProductComplAdd::findAll(['product_id' => $product->id]);
-        foreach ($models as $model) {
-            $model->delete();
-        }
-
         //  Основная комплектация.
+        $ids = [];
         foreach ($root->find('.card_prices_body', 0)->find('tr') as $k => $tr) {
             if ($k == 0) {
                 continue;
             }
 
-            $model = new ProductComplMain;
+            $modelName = $tr->find('td', 0)->text();
+
+            $model = ProductComplMain::findOne(['product_id' => $product->id, 'model' => $modelName]) ?: new ProductComplMain;
             $model->product_id = $product->id;
-            $model->model = $tr->find('td', 0)->text();
+            $model->model = $modelName;
             $model->description = $tr->find('td', 1)->text();
             if ($tr->find('td', 3)) {
                 $model->ccy = $tr->find('td', 2)->text();
@@ -331,28 +318,59 @@ class TonarController extends Controller
                 var_dump($model->getErrors());
                 throw new Exception('Не удалось сохранить основную комплектацию у товара ' . $product->id);
             }
+
+            $ids[] = $model->id;
+        }
+
+        // Remove not fined
+        $legacyModels = ProductComplMain::find()
+            ->where(['product_id' => $product->id])
+            ->andWhere(['not in', 'id', $ids])
+            ->all();
+        foreach ($legacyModels as $model) {
+            $model->delete();
         }
 
         //  Доп. комплектация.
+        $ids = [];
         foreach ($root->find('.card_prices_body', 1)->find('tr') as $k => $tr) {
             if ($k == 0) {
                 continue;
             }
 
-            $model = new ProductComplAdd;
-            $model->product_id = $product->id;
-            $model->name = $tr->find('td', 0)->text();
-            $model->complImage = $tr->find('td', 1)->find('a', 0)->href;
-            $model->cost = $tr->find('td', 2)->text();
+            $name = $tr->find('td', 0)->find('a', 0) ?
+                $tr->find('td', 0)->find('a', 0)->text() :
+                $tr->find('td', 0)->text();
 
-            if ($model->complImage) {
-                $model->complImage = self::BASE_URL . $model->complImage;
+            $hash = null;
+            $remoteUrl = $tr->find('td', 1)->find('a', 0)->href;
+            if ($remoteUrl) {
+                $remoteUrl = self::BASE_URL . $remoteUrl;
+                $hash = ProductComplAdd::generateHash($remoteUrl);
             }
+
+            $model = ProductComplAdd::findOne(['product_id' => $product->id, 'name' => $name, 'hash' => $hash]) ?: new ProductComplAdd;
+            $model->product_id = $product->id;
+            $model->name = $name;
+            $model->hash = $hash;
+            $model->remoteUrl = $remoteUrl;
+            $model->cost = $tr->find('td', 2)->text();
 
             if (!$model->save()) {
                 var_dump($model->getErrors());
                 throw new Exception('Не удалось сохранить доп. комплектацию у товара ' . $product->id);
             }
+
+            $ids[] = $model->id;
+        }
+
+        // Remove not fined
+        $legacyModels = ProductComplAdd::find()
+            ->where(['product_id' => $product->id])
+            ->andWhere(['not in', 'id', $ids])
+            ->all();
+        foreach ($legacyModels as $model) {
+            $model->delete();
         }
     }
 
@@ -378,14 +396,20 @@ class TonarController extends Controller
                 continue;
             }
 
-            $name = $domItem->find('.zapchast-name', 0);
+            $name = trim($domItem->find('.zapchast-name', 0) ?: '');
             $body = $domItem->find('.zapchast-body', 0);
-            $img = $domItem->find('img', 0);
+            $remoteUrl = $domItem->find('img', 0) ? $domItem->find('img', 0)->src : null;
+            $hash = null;
+            if ($remoteUrl) {
+                $remoteUrl = self::BASE_URL . $remoteUrl;
+                $hash = ProductParts::generateHash($remoteUrl);
+            }
 
-            $model = new ProductParts;
-            $model->name = isset($name) ? trim($name->text()) : '';
+            $model = ProductParts::findOne(['name' => $name, 'hash' => $hash]) ?: new ProductParts;
+            $model->name = $name;
+            $model->hash = $hash;
             $model->description = isset($body) ? trim(str_replace($model->name, '', $body->text())) : '';
-            $model->image = isset($img) ? (self::BASE_URL . $img->src) : '';
+            $model->remoteUrl = $remoteUrl;
             $model->parse_key = $parseKey;
             if (!$model->save()) {
                 var_dump($model->getErrors());
@@ -407,19 +431,15 @@ class TonarController extends Controller
 
         foreach ($root->find('.download_item') as $item) {
             $a = $item->find('a', 0);
-            $href = self::BASE_URL . $a->href;
-            $parseKey = sha1($href);
+            $remoteUrl = self::BASE_URL . $a->href;
 
-            //  Если уже файл есть в базе, то не сохраняем его.
-            if (ProductFiles::findOne(['parse_key' => $parseKey, 'product_id' => $product->id])) {
-                return;
-            }
+            $hash = ProductFiles::generateHash($remoteUrl);
 
-            $model = new ProductFiles;
+            $model = ProductFiles::findOne(['product_id' => $product->id, 'hash' => $hash]) ?: new ProductFiles;
             $model->product_id = $product->id;
-            $model->filename = $href;
+            $model->remoteUrl = $remoteUrl;
+            $model->hash = $hash;
             $model->name = trim($a->find('span', 0)->text());
-            $model->parse_key = $parseKey;
             if (!$model->save()) {
                 var_dump($model->getErrors());
                 throw new Exception('Не удалось сохранить файл товара ' . $product->id);

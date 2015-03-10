@@ -10,15 +10,13 @@ use Yii;
  * @property integer $id
  * @property integer $product_id
  * @property string $name
- * @property string $image
+ * @property string $hash
+ * @property string $ext
  * @property string $cost
  */
 class ProductComplAdd extends \yii\db\ActiveRecord
 {
-    /**
-     * @var string
-     */
-    public $complImage = '';
+    use FileTrait;
 
     /**
      * @inheritdoc
@@ -34,73 +32,26 @@ class ProductComplAdd extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['product_id'], 'required'],
+            ['product_id', 'required'],
+            ['remoteUrl', 'required', 'on' => 'insert'],
             [['product_id'], 'integer'],
             [['name'], 'string'],
-            [['image', 'cost'], 'string', 'max' => 255]
+            [['hash', 'cost', 'ext'], 'string', 'max' => 255],
+            [['hash', 'ext'], 'filter', 'filter' => 'strtolower'],
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'product_id' => 'Product ID',
-            'name' => 'Name',
-            'image' => 'Image',
-            'cost' => 'Cost',
-        ];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function beforeSave($insert)
-    {
-        //  Загружаем новые изображения.
-        if (!empty($this->complImage)) {
-            $ext = strtolower(pathinfo($this->complImage, PATHINFO_EXTENSION));
-            if (in_array($ext, ['jpg', 'jpeg', 'png'])) {
-                $this->image = md5(uniqid()) . 'cost.' . $ext;
-
-                $uploadDir = Yii::$app->getBasePath() . '/web/uploads/original';
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0775, true);
-                }
-
-                //  Качаем файл.
-                $this->download($this->complImage, $uploadDir . '/' . $this->image);
-            }
+    public function beforeSave($insert) {
+        if ($insert) {
+            $this->saveFiles();
         }
 
         return parent::beforeSave($insert);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function afterDelete()
-    {
-        if (!empty($this->image)) {
-            $uploadDir = Yii::$app->getBasePath() . '/web/uploads/original';
-            if (is_file($uploadDir . $this->image)) {
-                unlink($uploadDir . $this->image);
-            }
-        }
-
+    public function afterDelete() {
         parent::afterDelete();
-    }
 
-    /**
-     * Сохранит файл на диск.
-     * @param string $url
-     * @param string $file
-     */
-    private function download($url, $file)
-    {
-        file_put_contents($file, file_get_contents($url));
+        $this->removeFiles();
     }
 }

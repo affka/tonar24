@@ -5,6 +5,7 @@
 
 namespace app\components;
 
+use app\models\FileTrait;
 use Imagine\Image\ImageInterface;
 use yii\web\HttpException;
 
@@ -17,43 +18,31 @@ class ImageHelper
     /**
      * Уменьшает или увеличивает изображение.
      *
-     * @param       $source
+     * @param FileTrait $model
      * @param       $width
      * @param       $height
      * @param array $params
      *
      * @return string
+     * @throws HttpException
      */
-    public static function resize($source, $width, $height, $params = [])
+    public static function resize($model, $width, $height, $params = [])
     {
-        $uploadsPath = \Yii::$app->basePath . '/web';
-        $sourceName = $uploadsPath . $source;
-        if (!is_file($sourceName)) {
+        if (!$model || !is_file($model->path)) {
             return '';
         }
 
-        $baseName = basename($source);
-        $_partsExt = explode('.', $baseName);
-        $ext = '.' . strtolower(end($_partsExt));
-        $fileName = basename($baseName, $ext) . '_' . $width . 'x' . $height . $ext;
-        $destination = '/uploads/resized/' . $fileName;
-        $destinationPath = $uploadsPath . $destination;
+        $fileName = 'r' . $width . 'x' . $height . $model->ext;
+        $destinationUrl = $model->directoryUrl . '/' . $fileName;
+        $destinationPath = $model->directoryPath . '/' . $fileName;
 
         //  Если такой файл есть, то ничего ресайзить не надо.
         if (is_file($destinationPath)) {
-            return $destination;
+            return $destinationUrl;
         }
 
         $imagine = new \Imagine\Imagick\Imagine();
-        $image = $imagine->open($sourceName);
-        //$geometry = $image->getSize();
-
-        if ($width < 0) {
-            $width = 0;
-        }
-        if ($height < 0) {
-            $height = 0;
-        }
+        $image = $imagine->open($model->path);
 
         try {
             $image->getImagick()->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1, true);
@@ -62,93 +51,86 @@ class ImageHelper
             throw new HttpException($e->getCode(), $e->getMessage());
         }
 
-        return $destination;
+        return $destinationUrl;
     }
 
     /**
      * Обрезает изображение.
      *
-     * @param string  $source
+     * @param FileTrait $model
      * @param integer $width
      * @param integer $height
      * @param array   $params
      *
      * @return string
+     * @throws HttpException
      */
-    public static function thumbnail($source, $width, $height, $params = [])
+    public static function thumbnail($model, $width, $height, $params = [])
     {
-        $uploadsPath = \Yii::$app->basePath . '/web';
-        $sourceName = $uploadsPath . $source;
-        if (!is_file($sourceName)) {
+        if (!$model || !is_file($model->path)) {
             return '';
         }
 
-        $baseName = basename($source);
-        $_partsExt = explode('.', $baseName);
-        $ext = '.' . strtolower(end($_partsExt));
-        $fileName = basename($baseName, $ext) . '_' . $width . 'x' . $height . 't' . $ext;
-        $destination = '/uploads/resized/' . $fileName;
-        $destinationPath = $uploadsPath . $destination;
+        $fileName = 't' . $width . 'x' . $height . $model->ext;
+        $destinationUrl = $model->directoryUrl . '/' . $fileName;
+        $destinationPath = $model->directoryPath . '/' . $fileName;
 
         //  Если такой файл есть, то ничего ресайзить не надо.
         if (is_file($destinationPath)) {
-            return $destination;
+            return $destinationUrl;
         }
 
         $imagine = new \Imagine\Imagick\Imagine();
-        $image = $imagine->open($sourceName);
+        $image = $imagine->open($model->path);
         $geometry = $image->getSize();
 
-        if ($width < 0) {
-            $width = 0;
-        }
-        if ($height < 0) {
-            $height = 0;
-        }
-
-        try {
             $image
                 ->thumbnail(new \Imagine\Image\Box($width, $height), ImageInterface::THUMBNAIL_OUTBOUND)
                 ->save($destinationPath);
-        } catch (\RuntimeException $e) {
-            throw new HttpException($e->getCode(), $e->getMessage());
-        }
 
-        return $destination;
+        return $destinationUrl;
     }
 
     /**
      * Вернет html img тег, с сылкой на изображение с новыми размерами.
      *
-     * @param string  $source
+     * @param FileTrait $model
      * @param integer $width
      * @param integer $height
      * @param array   $params
      *
      * @return string
      */
-    public static function img($source, $width, $height, $params = [])
+    public static function img($model, $width, $height, $params = [])
     {
+        if (!$model) {
+            return '';
+        }
+
         $alt = isset($params['alt']) ? $params['alt'] : '';
         return isset($params['thumbnail']) && $params['thumbnail']
-            ? '<img src="' . static::thumbnail($source, $width, $height, $params) . '" alt="' . $alt . '" />'
-            : '<img src="' . static::resize($source, $width, $height, $params) . '" alt="' . $alt . '" />';
+            ? '<img src="' . static::thumbnail($model, $width, $height, $params) . '" alt="' . $alt . '" />'
+            : '<img src="' . static::resize($model, $width, $height, $params) . '" alt="' . $alt . '" />';
     }
 
     /**
      * Вернет сылку на изображение с новыми размерами.
      *
-     * @param string  $source
+     * @param FileTrait $model
      * @param integer $width
      * @param integer $height
      * @param array   $params
      *
      * @return string
      */
-    public static function url($source, $width, $height, $params = [])
+    public static function url($model, $width, $height, $params = [])
     {
+        if (!$model) {
+            return '';
+        }
+
         return isset($params['thumbnail']) && $params['thumbnail']
-            ? static::thumbnail($source, $width, $height, $params)
-            : static::resize($source, $width, $height, $params);
+            ? static::thumbnail($model, $width, $height, $params)
+            : static::resize($model, $width, $height, $params);
     }
 }

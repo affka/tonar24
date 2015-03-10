@@ -9,10 +9,13 @@ use Yii;
  *
  * @property integer $id
  * @property integer $product_id
- * @property string $filename
+ * @property string $hash
+ * @property string $ext
  */
 class ProductImages extends \yii\db\ActiveRecord
 {
+    use FileTrait;
+
     /**
      * @inheritdoc
      */
@@ -27,20 +30,25 @@ class ProductImages extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['product_id', 'filename'], 'required'],
+            [['product_id'], 'required'],
+            [['remoteUrl'], 'required', 'on' => 'insert'],
             [['product_id'], 'integer'],
+            [['hash', 'ext'], 'string', 'max' => 255],
+            [['hash', 'ext'], 'filter', 'filter' => 'strtolower'],
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'product_id' => 'Product ID',
-            'filename' => 'Filename',
-        ];
+    public function beforeSave($insert) {
+        if ($insert) {
+            $this->saveFiles();
+        }
+
+        return parent::beforeSave($insert);
+    }
+
+    public function afterDelete() {
+        parent::afterDelete();
+
+        $this->removeFiles();
     }
 }

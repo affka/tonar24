@@ -9,10 +9,13 @@ use Yii;
  *
  * @property integer $id
  * @property integer $product_id
- * @property string $filename
+ * @property string $hash
+ * @property string $ext
  */
 class ProductFiles extends \yii\db\ActiveRecord
 {
+    use FileTrait;
+
     /**
      * @inheritdoc
      */
@@ -27,51 +30,23 @@ class ProductFiles extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['product_id', 'filename', 'parse_key', 'name'], 'required'],
+            [['product_id', 'hash', 'name'], 'required'],
             [['product_id'], 'integer'],
-            [['filename', 'parse_key', 'name'], 'string', 'max' => 255]
+            [['hash', 'ext', 'name'], 'string', 'max' => 255]
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'product_id' => 'Product ID',
-            'filename' => 'Filename',
-        ];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function beforeSave($insert)
-    {
-        //  Загружаем новые изображения.
-        $filename = md5(uniqid()) . 'file.' . strtolower(pathinfo($this->filename, PATHINFO_EXTENSION));
-
-        $uploadDir = Yii::$app->getBasePath() . '/web/uploads/files';
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0775, true);
+    public function beforeSave($insert) {
+        if ($insert) {
+            $this->saveFiles();
         }
-
-        //  Качаем файл.
-        $this->filename = $this->download($this->filename, $uploadDir . '/' . $filename);
 
         return parent::beforeSave($insert);
     }
 
-    /**
-     * Сохранит файл на диск.
-     * @param string $url
-     * @param string $file
-     */
-    private function download($url, $file)
-    {
-        file_put_contents($file, file_get_contents($url));
-        return basename($file);
+    public function afterDelete() {
+        parent::afterDelete();
+
+        $this->removeFiles();
     }
 }

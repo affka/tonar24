@@ -21,8 +21,8 @@ $this->params['breadcrumbs'][] = $product->name;
         <div class="row">
             <div class="col-xs-7">
                 <div class="row product-thumbnail-main">
-                    <a href="<?= ImageHelper::url('/uploads/original/' . $product->images[0]->filename, 1152, 864); ?>" data-lightbox="roadtrip">
-                        <img src="<?= ImageHelper::url('/uploads/original/' . $product->images[0]->filename, 450, 450); ?>" />
+                    <a href="<?= ImageHelper::url($product->images[0], 1152, 864); ?>" data-lightbox="roadtrip">
+                        <img src="<?= ImageHelper::url($product->images[0], 450, 450); ?>" />
                     </a>
                 </div>
                 <div class="row product-description">
@@ -34,8 +34,8 @@ $this->params['breadcrumbs'][] = $product->name;
                     <?php foreach ($product->images as $key => $image) { ?>
                         <?php if ($key > 0) { ?>
                             <div class="product-thumbnail">
-                                <a href="<?= ImageHelper::url('/uploads/original/' . $image->filename, 1152, 864); ?>" data-lightbox="roadtrip">
-                                    <img src="<?= ImageHelper::url('/uploads/original/' . $image->filename, 100, 100, ['thumbnail' => true]); ?>" />
+                                <a href="<?= ImageHelper::url($image, 1152, 864); ?>" data-lightbox="roadtrip">
+                                    <img src="<?= ImageHelper::url($image, 100, 100, ['thumbnail' => true]); ?>" />
                                 </a>
                             </div>
                         <?php } ?>
@@ -48,7 +48,7 @@ $this->params['breadcrumbs'][] = $product->name;
                             <div class="panel-body">
                                 <ul>
                                     <?php foreach ($product->files as $file) { ?>
-                                        <li><a href="/uploads/files/<?= $file->filename ?>"><?= $file->name ?></a></li>
+                                        <li><a href="<?= $file->url ?>"><?= $file->name ?></a></li>
                                     <?php } ?>
                                 </ul>
                             </div>
@@ -117,8 +117,8 @@ $this->params['breadcrumbs'][] = $product->name;
                                 <tr>
                                     <td><?= $model->name ?></td>
                                     <td>
-                                        <a href="<?= ImageHelper::url('/uploads/original/' . $model->image, 1152, 864); ?>" data-lightbox="roadtrip<?= $model->id ?>">
-                                            <img src="<?= ImageHelper::url('/uploads/original/' . $model->image, 100, 100, ['thumbnail' => true]); ?>" />
+                                        <a href="<?= ImageHelper::url($model, 1152, 864); ?>" data-lightbox="roadtrip<?= $model->id ?>">
+                                            <img src="<?= ImageHelper::url($model, 100, 100, ['thumbnail' => true]); ?>" />
                                         </a>
                                     <td><?= $model->cost ?></td>
                                 </tr>
@@ -131,8 +131,8 @@ $this->params['breadcrumbs'][] = $product->name;
                     <?php foreach ($product->parts as $model) { ?>
                     <div class="product-details-item">
                         <div class="product-details-image">
-                            <a href="<?= ImageHelper::url('/uploads/original/' . $model->image, 1152, 864); ?>" data-lightbox="part<?= $model->id ?>">
-                                <img src="<?= ImageHelper::url('/uploads/original/' . $model->image, 100, 100, ['thumbnail' => true]); ?>" />
+                            <a href="<?= ImageHelper::url($model, 1152, 864); ?>" data-lightbox="part<?= $model->id ?>">
+                                <img src="<?= ImageHelper::url($model, 100, 100, ['thumbnail' => true]); ?>" />
                             </a>
                         </div>
                         <div class="product-details-description">
