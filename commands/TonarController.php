@@ -117,13 +117,13 @@ class TonarController extends Controller
 
                     $this->getProducts($subCategory, $sa->href);
                 }
+            } else {
+                $this->getProducts($category, $a->href);
             }
-
-            $this->getProducts($category, $a->href);
         }
     }
 
-    public function actionDealers($flush=fale) {
+    public function actionDealers($flush=false) {
         if ($flush) {
             Dealer::deleteAll();
         }

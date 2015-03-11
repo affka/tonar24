@@ -55,13 +55,10 @@ class Categories extends \yii\db\ActiveRecord
         ];
     }
 
-    /**
-     * Связь с таблицей products.
-     * @return \yii\db\ActiveQuery
-     */
     public function getItems()
     {
-        return $this->hasMany(Products::className(), ['category_id' => 'id']);
+        $ids = [$this->id] + static::find()->select('id')->where(['parent_id' => $this->id])->column();
+        return Products::find()->where(['in', 'category_id', $ids])->all();
     }
 
     /**
