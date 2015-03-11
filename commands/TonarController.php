@@ -349,7 +349,7 @@ class TonarController extends Controller
                 $hash = ProductComplAdd::generateHash($remoteUrl);
             }
 
-            $model = ProductComplAdd::findOne(['product_id' => $product->id, 'name' => $name, 'hash' => $hash]) ?: new ProductComplAdd;
+            $model = ProductComplAdd::findOne(['product_id' => $product->id, 'name' => $name]) ?: new ProductComplAdd;
             $model->product_id = $product->id;
             $model->name = $name;
             $model->hash = $hash;

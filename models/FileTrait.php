@@ -61,7 +61,9 @@ trait FileTrait {
     }
 
     protected function removeFiles() {
-        unlink($this->getDirectoryPath());
+        if ($this->hash) {
+            unlink($this->getDirectoryPath());
+        }
     }
 
 }
