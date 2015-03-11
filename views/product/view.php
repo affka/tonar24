@@ -136,7 +136,7 @@ $this->params['breadcrumbs'][] = $product->name;
                             </a>
                         </div>
                         <div class="product-details-description">
-                            <strong><?= $model->name ?></strong><br/>
+                            <strong><?= $model->name ?></strong>
                             <p><?= $model->description ?></p>
                         </div>
                     </div>

@@ -267,12 +267,15 @@ class TonarController extends Controller
 
         //  Свойства.
         foreach ($root->find('.card_options_table tr') as $prop) {
-            $name = $prop->find('td', 0)->text();
-            $value = htmlspecialchars_decode($prop->find('td', 1)->text());
-            $properties[] = [
-                'name' => $name,
-                'value' => $value
-            ];
+            $name = trim($prop->find('td', 0)->text());
+            $value = trim(htmlspecialchars_decode($prop->find('td', 1)->text()));
+
+            if ($name && $value) {
+                $properties[] = [
+                    'name' => $name,
+                    'value' => $value
+                ];
+            }
         }
 
         $product->productImages = $images;
