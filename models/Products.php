@@ -202,11 +202,10 @@ class Products extends \yii\db\ActiveRecord
     private function saveImages()
     {
         $this->productImages = array_unique($this->productImages);
-        $hashes = [];
 
+        $ids = [];
         foreach ($this->productImages as $image) {
             $hash = ProductImages::generateHash($image);
-            $hashes[] = $hash;
 
             $model = ProductImages::findOne(['hash' => $hash]) ?: new ProductImages;
             $model->product_id = $this->id;
@@ -216,12 +215,14 @@ class Products extends \yii\db\ActiveRecord
             if (!$model->save()) {
                 throw new Exception('Не удалось сохранить изображение для товара ' . $this->id);
             }
+
+            $ids[] = $model->id;
         }
 
         // Remove not fined
         $oldImages = ProductImages::find()
             ->where(['product_id' => $this->id])
-            ->andWhere(['not in', 'hash', $hashes])
+            ->andWhere(['not in', 'id', $ids])
             ->all();
         foreach ($oldImages as $model) {
             $model->delete();
@@ -233,15 +234,28 @@ class Products extends \yii\db\ActiveRecord
      */
     private function saveProperties()
     {
+        $ids = [];
         foreach ($this->productProperties as $property) {
-            $model = new ProductProperties;
+            $model = ProductProperties::findOne(['product_id' => $this->id, 'name' => $property['name']]) ?: new ProductProperties;
             $model->product_id = $this->id;
             $model->name = $property['name'];
             $model->value = $property['value'];
-            if ($model->validate() && !$model->save()) {
+
+            if (!$model->save()) {
                 var_dump($model->getErrors());
                 throw new Exception('Не удалось сохранить свойство для товара ' . $this->id);
             }
+
+            $ids[] = $model->id;
+        }
+
+        // Remove not fined
+        $old = ProductProperties::find()
+            ->where(['product_id' => $this->id])
+            ->andWhere(['not in', 'id', $ids])
+            ->all();
+        foreach ($old as $model) {
+            $model->delete();
         }
     }
 }
