@@ -24,6 +24,11 @@ header .logo-line .logo-phone {
   font-weight: bold;
   font-size: 22px;
 }
+header .logo-line .logo-phone a {
+  display: block;
+  font-size: 14px;
+  text-align: right;
+}
 header .navbar {
   border-radius: 0;
   border-left: none;

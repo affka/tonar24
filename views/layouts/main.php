@@ -40,6 +40,7 @@ AppAsset::register($this);
         </div>
         <div class="logo-phone">
             Тел. +7 (391) 276-22-15
+            <a href="<?= \yii\helpers\Url::to(['/index/call-back']); ?>">Заказать обратный звонок</a>
         </div>
     </div>
 

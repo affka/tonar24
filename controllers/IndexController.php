@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\ContactForm;
 use app\models\Dealer;
 use Yii;
 use yii\web\Controller;
@@ -15,6 +16,41 @@ class IndexController extends Controller
     {
         $this->getView()->title = 'Главная страница';
         return $this->render('index');
+    }
+
+    /**
+     * Отображение ошибки на сайте.
+     */
+    public function actionCallBack()
+    {
+        $this->getView()->title = 'Обратный звонок';
+
+        $model = new ContactForm();
+        if ($model->load(Yii::$app->request->post()) && $model->send()) {
+            Yii::$app->session->setFlash('contactFormSubmitted');
+            return $this->refresh();
+        } else {
+            return $this->render('call-back', [
+                'model' => $model,
+            ]);
+        }
+
+
+
+        if (!empty($_POST['phone'])) {
+            $_POST['phone'] = preg_replace('[^0-9-() ]', '', $_POST['phone']);
+            $_POST['phone'] = trim($_POST['phone']);
+
+            if ($_POST['phone']) {
+                Yii::$app->mailer->send();
+
+                return $this->render('call-back-ok', [
+                    'phone' => $_POST['phone'],
+                ]);
+            }
+        }
+
+        return $this->render('call-back');
     }
 
     /**
