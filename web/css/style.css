@@ -181,7 +181,13 @@ header .navbar .navbar-collapse {
   height: 75px;
 }
 .contact blockquote {
-  width: 50%;
+  position: relative;
+}
+.contact blockquote .contact-photo {
+  position: absolute;
+  top: 0;
+  right: 10%;
+  height: 185px;
 }
 #index-slider {
   width: 707px;

@@ -15,13 +15,12 @@ class ProductController extends Controller
      */
     public function actionView($slug = '')
     {
-        $this->getView()->title = 'Категория';
-
         $product = Products::findOne(['slug' => $slug]);
         if (!$product) {
             throw new HttpException(404, 'Страница не найдена');
         }
 
+        $this->getView()->title = $product->name;
         return $this->render('view', [
             'product' => $product
         ]);

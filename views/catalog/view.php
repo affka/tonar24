@@ -5,7 +5,6 @@
 
 use app\components\ImageHelper;
 
-$this->params['breadcrumbs'][] = $model->name;
 ?>
 
 <div class="container">
