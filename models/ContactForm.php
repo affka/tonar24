@@ -38,7 +38,7 @@ class ContactForm extends Model {
      * @return boolean
      */
     public function send() {
-        if ($this->validate()) {
+        if ($this->validate() && Yii::$app->params['adminEmail']) {
             Yii::$app->mailer->compose()
                 ->setTo(Yii::$app->params['adminEmail'])
                 ->setFrom(Yii::$app->params['fromEmail'])
