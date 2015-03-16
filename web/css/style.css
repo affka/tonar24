@@ -38,6 +38,58 @@ header .navbar {
 header .navbar .navbar-collapse {
   padding: 0;
 }
+header form.gsc-search-box {
+  background-color: #f8f8f8;
+  border: none;
+  float: right;
+  width: 350px;
+  padding: 8px 0 0 0;
+}
+header form.gsc-search-box input.gsc-input {
+  height: 34px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-position: 6px 50% !important;
+}
+header form.gsc-search-box table.gsc-search-box td.gsc-input {
+  padding-right: 3px;
+}
+header form.gsc-search-box input.gsc-search-button {
+  color: #fff;
+  background-color: #337ab7;
+  display: inline-block;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.42857143;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background-image: none;
+  border: 1px solid #2e6da4;
+  border-radius: 4px;
+  height: auto;
+}
+header form.gsc-search-box .gsc-clear-button {
+  display: none;
+}
+.container .gsc-control-cse {
+  padding: 0;
+  border: none;
+}
 .catalog-menu ul {
   padding-left: 00px;
   list-style: none;

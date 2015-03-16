@@ -55,11 +55,44 @@ AppAsset::register($this);
                 ['label' => 'Контакты', 'url' => ['/index/contact']],
             ],
         ]);
+    ?>
+    <script>
+        (function() {
+            var cx = '006203079460066965725:7dgvqdi-9o8';
+            var gcse = document.createElement('script');
+            gcse.type = 'text/javascript';
+            gcse.async = true;
+            gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+            '//www.google.com/cse/cse.js?cx=' + cx;
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(gcse, s);
+        })();
+
+        window.__gcse = window.__gcse || {};
+        window.__gcse.callback = function() {
+            $('form.gsc-search-box')
+                .on('keyup', 'input.gsc-input', function (e) {
+                    if (e.keyCode === 13) {
+                        $('#content').hide();
+                    }
+                })
+                .on('click', 'input.gsc-search-button', function (e) {
+                    $('#content').hide();
+                });
+        }
+    </script>
+    <gcse:searchbox></gcse:searchbox>
+    <?php
         NavBar::end();
     ?>
 </header>
 
-<?= $content ?>
+<div class="container">
+    <gcse:searchresults></gcse:searchresults>
+</div>
+<div id="content">
+    <?= $content ?>
+</div>
 
 <?php $this->endBody() ?>
 </body>
