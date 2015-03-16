@@ -55,6 +55,14 @@ $this->params['breadcrumbs'][] = $product->name;
                         </div>
                     </div>
                 <?php } ?>
+                <div class="row">
+                    <a href="<?= \yii\helpers\Url::to(['/product/order', 'slug' => $product->slug]); ?>" class="btn btn-primary">
+                        Заказать
+                    </a>
+                    <a href="<?= \yii\helpers\Url::to(['/product/lease-form', 'slug' => $product->slug]); ?>" class="btn btn-primary">
+                        Оставить заявку на лизинг
+                    </a>
+                </div>
             </div>
         </div>
 

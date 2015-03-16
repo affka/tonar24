@@ -34,23 +34,6 @@ class IndexController extends Controller
                 'model' => $model,
             ]);
         }
-
-
-
-        if (!empty($_POST['phone'])) {
-            $_POST['phone'] = preg_replace('[^0-9-() ]', '', $_POST['phone']);
-            $_POST['phone'] = trim($_POST['phone']);
-
-            if ($_POST['phone']) {
-                Yii::$app->mailer->send();
-
-                return $this->render('call-back-ok', [
-                    'phone' => $_POST['phone'],
-                ]);
-            }
-        }
-
-        return $this->render('call-back');
     }
 
     /**
