@@ -16,6 +16,17 @@ switch (Yii::$app->controller->id) {
 
 ?>
 <ul>
+    <li class="<?= Yii::$app->controller->route === 'catalog/spares' ? 'active' : '' ?>">
+        <a href="<?= \yii\helpers\Url::to(['/catalog/spares']); ?>">
+            Запчасти
+        </a>
+    </li>
+    <li class="<?= Yii::$app->controller->route === 'catalog/axis' ? 'active' : '' ?>">
+        <a href="<?= \yii\helpers\Url::to(['/catalog/axis']); ?>">
+            Оси «Тонар»
+        </a>
+    </li>
+
     <?php foreach ($menu as $item) { ?>
         <?php
             $isActive = $currentCategory && $item['parent']->id === $currentCategory->id;
@@ -25,13 +36,22 @@ switch (Yii::$app->controller->id) {
                 }
             }
         ?>
-        <li class="<?= $isActive ? 'active' : '' ?>"><a href="/catalog/<?= $item['parent']->slug ?>" class=""><?= $item['parent']->name ?></a></li>
+        <li class="<?= $isActive ? 'active' : '' ?>">
+            <a href="<?= \yii\helpers\Url::to(['/catalog/view', 'slug' => $item['parent']->slug]); ?>">
+                <?= $item['parent']->name ?>
+            </a>
+        </li>
+
         <?php if (count($item['childs']) > 0) { ?>
             <ul>
             <?php foreach ($item['childs'] as $child) {
                 $isChildActive = $currentCategory && $child->id === $currentCategory->id;
                 ?>
-                <li class="<?= $isChildActive ? 'active' : '' ?>"><a href="/catalog/<?= $child->slug ?>" class=""><?= $child->name ?></a></li>
+                <li class="<?= $isChildActive ? 'active' : '' ?>">
+                    <a href="<?= \yii\helpers\Url::to(['/catalog/view', 'slug' => $child->slug]); ?>>">
+                        <?= $child->name ?>
+                    </a>
+                </li>
             <?php } ?>
             </ul>
         <?php } ?>

@@ -1,6 +1,7 @@
 <?php
 
 namespace app\models;
+use yii\base\Exception;
 
 /**
  * This is the model class for table "product_compl_add".
@@ -34,6 +35,47 @@ trait FileTrait {
         return \Yii::$app->getBasePath() . '/web/uploads/' . static::tableName() . '/' . $this->hash;
     }
 
+    public function getIconUrl() {
+        switch ($this->ext) {
+            case 'doc':
+            case 'docx':
+                $iconName = 'document';
+                break;
+
+            case 'xls':
+            case 'xlsx':
+                $iconName = 'excel';
+                break;
+
+            case 'gif':
+            case 'jpg':
+            case 'jpeg':
+            case 'png':
+            case 'bmp':
+            case 'tiff':
+            case 'psd':
+                $iconName = 'image';
+                break;
+
+            case 'zip':
+            case 'rar':
+            case 'gz':
+            case 'tar':
+                $iconName = 'archive';
+                break;
+
+            default:
+                $iconName = $this->ext;
+                break;
+        }
+
+        $path = '/img/icons-file/' . $iconName . '.png';
+        if (file_exists(\Yii::getAlias('@webroot') . $path)) {
+            return \Yii::getAlias('@web') . $path;
+        }
+        return \Yii::getAlias('@web') . '/img/icons-file/default.png';
+    }
+
     protected function saveFiles() {
         // Check url exists
         if (!$this->remoteUrl) {
@@ -57,11 +99,16 @@ trait FileTrait {
         }
 
         // Download file
-        file_put_contents($this->getPath(), file_get_contents($this->remoteUrl));
+        $content = @file_get_contents($this->remoteUrl);
+        if ($content) {
+            file_put_contents($this->getPath(), $content);
+        } else {
+            $this->ext = null;
+        }
     }
 
     protected function removeFiles() {
-        if ($this->hash) {
+        if ($this->hash && $this->ext) {
             unlink($this->getDirectoryPath());
         }
     }

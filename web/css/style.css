@@ -167,7 +167,7 @@ header form.gsc-search-box .gsc-clear-button {
   position: fixed;
   bottom: 0;
 }
-.thumbnail {
+.thumbnail-catalog {
   border: none;
   margin-bottom: 5px;
 }
@@ -247,4 +247,36 @@ header form.gsc-search-box .gsc-clear-button {
 }
 #index-slider .carousel-caption {
   display: none;
+}
+.spares-container .col-xs-9 h1 {
+  margin-bottom: 20px;
+}
+.spares-container .media-body a {
+  display: block;
+  padding: 6px 0;
+}
+.axis-container .col-xs-9 h1 {
+  margin-bottom: 20px;
+}
+.axis-container .thumbnail {
+  height: 300px;
+}
+.axis-container .thumbnail .caption {
+  overflow: hidden;
+  max-height: 110px;
+}
+.documents-container .col-xs-9 h1 {
+  margin-bottom: 20px;
+}
+.documents-container .media-body table {
+  min-height: 32px;
+  margin-top: -2px;
+}
+.documents-container .media-body table tr,
+.documents-container .media-body table td {
+  margin: 0;
+  padding: 0;
+}
+.documents-container .media-body table td {
+  vertical-align: middle;
 }

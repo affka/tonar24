@@ -203,12 +203,10 @@ header {
     bottom: 0;
 }
 
-.thumbnail {
+.thumbnail-catalog {
     border: none;
     margin-bottom: 5px;
-}
 
-.thumbnail-catalog {
     img {
         height: 165px;
     }
@@ -310,5 +308,47 @@ header {
     .carousel-caption {
         //font-size: 2em;
         display: none;
+    }
+}
+
+.spares-container {
+    .col-xs-9 h1 {
+        margin-bottom: 20px;
+    }
+    .media-body a {
+        display: block;
+        padding: 6px 0;
+    }
+}
+
+.axis-container {
+    .col-xs-9 h1 {
+        margin-bottom: 20px;
+    }
+    .thumbnail {
+        height: 300px;
+
+        .caption {
+            overflow: hidden;
+            max-height: 110px;
+        }
+    }
+}
+
+.documents-container {
+    .col-xs-9 h1 {
+        margin-bottom: 20px;
+    }
+    .media-body table {
+        min-height: 32px;
+        margin-top: -2px;
+        
+        tr, td {
+            margin: 0;
+            padding: 0;
+        }
+        td {
+            vertical-align: middle;
+        }
     }
 }

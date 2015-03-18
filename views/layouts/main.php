@@ -52,6 +52,7 @@ AppAsset::register($this);
             'items' => [
                 ['label' => 'Главная', 'url' => ['/index/index']],
                 ['label' => 'Карта сервисной сети', 'url' => ['/index/service-map']],
+                ['label' => 'Нормативные документы', 'url' => ['/index/documents']],
                 ['label' => 'Контакты', 'url' => ['/index/contact']],
             ],
         ]);

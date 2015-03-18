@@ -1,12 +1,16 @@
 <?php
 namespace app\commands;
 
+use app\models\Axis;
+use app\models\Document;
 use app\models\ProductComplAdd;
 use app\models\ProductComplMain;
 use app\models\Dealer;
 use app\models\ProductFiles;
 use app\models\ProductParts;
 use app\models\Products;
+use app\models\Spare;
+use app\models\SpareGroup;
 use yii\console\Controller;
 use serhatozles\simplehtmldom\SimpleHTMLDom;
 use app\models\Categories;
@@ -43,6 +47,10 @@ class TonarController extends Controller
             }
         }
         closedir($handle);
+    }
+
+    public static function mb_trim($string, $trim_chars = '\s'){
+        return preg_replace('/^['.$trim_chars.']*(?U)(.*)['.$trim_chars.']*$/u', '\\1',$string);
     }
 
     /**
@@ -207,6 +215,155 @@ class TonarController extends Controller
         // Remove old items
         if (count($tonarIds) > 0) {
             Dealer::deleteAll(['not in', 'tonarId', $tonarIds]);
+        }
+    }
+
+    public function actionSpares() {
+        $root = SimpleHTMLDom::file_get_html(self::BASE_URL . '/service-spares/spares/catalog-spares/');
+        $content = $root->find('#wrap', 0)->children(2);
+
+        $items = [];
+        $this->parseSpareItem($content, $items);
+
+        $ids = [];
+        $groupIds = [];
+        foreach ($items as $groupTitle => $children) {
+            echo "--- " . $groupTitle . "\n";
+            // Save spare group
+            $spareGroup = SpareGroup::findOne(['title' => $groupTitle]) ?: new SpareGroup();
+            $spareGroup->title = $groupTitle;
+            if (!$spareGroup->save()) {
+                var_dump($spareGroup->getErrors());
+                throw new Exception('Не удалось сохранить группу запчастей!');
+            }
+            $groupIds[] = $spareGroup->id;
+
+            foreach ($children as $remoteUrl => $title) {
+                echo $title . "\n";
+                $hash = Spare::generateHash($remoteUrl);
+
+                // Save spare item
+                $spare = Spare::findOne(['hash' => $hash]) ?: new Spare();
+                $spare->group_id = $spareGroup->id;
+                $spare->title = $title;
+                $spare->hash = $hash;
+                $spare->remoteUrl = $remoteUrl;
+                if (!$spare->save()) {
+                    var_dump($spare->getErrors());
+                    throw new Exception('Не удалось сохранить запчасть!');
+                }
+                $ids[] = $spare->id;
+            }
+        }
+
+        // Remove not fined
+        foreach (SpareGroup::find()->andWhere(['not in', 'id', $groupIds])->all() as $model) {
+            $model->delete();
+        }
+        foreach (Spare::find()->andWhere(['not in', 'id', $ids])->all() as $model) {
+            $model->delete();
+        }
+    }
+
+    protected function parseSpareItem($node, &$items = [], &$group='') {
+
+        switch ($node->tag) {
+            case 'b':
+                $text = self::mb_trim($node->plaintext);
+                if ($text) {
+                    $group = $text;
+                }
+                break;
+
+            case 'a':
+                $href = self::BASE_URL . $node->href;
+                if (preg_match('/[а-яa-z0-9]/i', $node->plaintext) && $group && $href) {
+                    if (!isset($items[$group])) {
+                        $items[$group] = [];
+                    }
+                    if (!isset($items[$group][$href])) {
+                        $items[$group][$href] = '';
+                    }
+                    $items[$group][$href] .= self::mb_trim($node->plaintext);
+                }
+                break;
+
+            default:
+                $i = 0;
+                while ($item = $node->children($i++)){
+                    $this->parseSpareItem($item, $items, $group);
+                }
+                break;
+        }
+
+        return $items;
+    }
+
+    public function actionDocuments() {
+        $root = SimpleHTMLDom::file_get_html(self::BASE_URL . '/question-answer/normative-document/');
+        $nodes = $root->find('.document-name a');
+
+        $items = [];
+        foreach ($nodes as $node) {
+            $items[self::BASE_URL . $node->href] = self::mb_trim($node->plaintext);
+        }
+
+        $ids = [];
+        foreach ($items as $remoteUrl => $title) {
+            echo $title . "\n";
+            $hash = Document::generateHash($remoteUrl);
+
+            // Save item
+            $document = Document::findOne(['hash' => $hash]) ?: new Document();
+            $document->title = $title;
+            $document->hash = $hash;
+            $document->remoteUrl = $remoteUrl;
+            if (!$document->save()) {
+                var_dump($document->getErrors());
+                throw new Exception('Не удалось сохранить документ!');
+            }
+            $ids[] = $document->id;
+        }
+
+        // Remove not fined
+        foreach (Document::find()->andWhere(['not in', 'id', $ids])->all() as $model) {
+            $model->delete();
+        }
+    }
+
+    public function actionAxis() {
+        $root = SimpleHTMLDom::file_get_html(self::BASE_URL . '/service-spares/spares/axis-tonar/');
+        $nodes = $root->find('#wrap', 0)->children(2)->find('table td a');
+
+        $items = [];
+        foreach ($nodes as $node) {
+            $text = trim($node->plaintext);
+            if ($text) {
+                $text = preg_replace('/^[0-9]+\.\s+/', '', $text); // remove number
+                $items[self::BASE_URL . $node->href] = self::mb_trim($text);
+            }
+        }
+
+        $ids = [];
+        foreach ($items as $remoteUrl => $title) {
+            echo $title . "\n";
+            $hash = Axis::generateHash($remoteUrl);
+
+            // Save item
+            $axis = Axis::findOne(['hash' => $hash]) ?: new Axis();
+            $axis->title = $title;
+            $axis->hash = $hash;
+            $axis->remoteUrl = $remoteUrl;
+            if (!$axis->save()) {
+                var_dump($axis->getErrors());
+                throw new Exception('Не удалось сохранить ось!');
+            }
+            $ids[] = $axis->id;
+        }
+
+        // Remove not fined
+        foreach (Axis::find()->andWhere(['not in', 'id', $ids])->all() as $model) {
+            $model->delete();
         }
     }
 

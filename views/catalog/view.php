@@ -23,7 +23,7 @@ use app\components\ImageHelper;
             <?php /** @var \app\models\Products $item */ ?>
             <?php foreach ($model->items as $item) { ?>
                 <div class="col-sm-6 col-md-4">
-                    <div class="thumbnail thumbnail-catalog">
+                    <div class="thumbnail-catalog">
                         <a href="<?= \yii\helpers\Url::to(['/product/view', 'slug' => $item->slug]) ?>" class="catalog-img"><?= ImageHelper::img($item->getFirstImage(), 300, 200, ['thumbnail' => true]); ?></a>
                         <div class="caption">
                             <a href="<?= \yii\helpers\Url::to(['/product/view', 'slug' => $item->slug]) ?>"><?= $item->name ?></a>

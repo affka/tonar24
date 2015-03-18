@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\ContactForm;
 use app\models\Dealer;
+use app\models\Document;
 use Yii;
 use yii\web\Controller;
 
@@ -61,5 +62,15 @@ class IndexController extends Controller
     public function actionError()
     {
         //
+    }
+
+    public function actionDocuments()
+    {
+        $documents = Document::find()->where('ext <> ""')->all();
+
+        $this->getView()->title = 'Нормативные документы';
+        return $this->render('documents', [
+            'documents' => $documents,
+        ]);
     }
 }
