@@ -51,6 +51,7 @@ $config = [
                 'catalog/spares' => 'catalog/spares',
                 'catalog/axis' => 'catalog/axis',
                 'catalog/<slug>' => 'catalog/view',
+                'decision/<id>' => 'catalog/decision',
                 'product/<slug>' => 'product/view',
                 'product/<slug>/order' => 'product/order',
                 'product/<slug>/lease-form' => 'product/lease-form',

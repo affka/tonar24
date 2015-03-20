@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\ContactForm;
 use app\models\Dealer;
+use app\models\Decision;
 use app\models\Document;
 use Yii;
 use yii\web\Controller;
@@ -15,8 +16,12 @@ class IndexController extends Controller
      */
     public function actionIndex()
     {
+        $decisions = Decision::find()->all();
+
         $this->getView()->title = 'Главная страница';
-        return $this->render('index');
+        return $this->render('index', [
+            'decisions' => $decisions,
+        ]);
     }
 
     /**

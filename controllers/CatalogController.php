@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Axis;
 use app\models\Categories;
+use app\models\Decision;
 use app\models\Spare;
 use app\models\SpareGroup;
 use Yii;
@@ -53,6 +54,19 @@ class CatalogController extends Controller
         $this->getView()->title = 'Оси «Тонар»';
         return $this->render('axis', [
             'axis' => $axis,
+        ]);
+    }
+
+    public function actionDecision($id)
+    {
+        $decision = Decision::findOne($id);
+        if (!$decision) {
+            throw new HttpException(404, 'Страница не найдена');
+        }
+
+        $this->getView()->title = 'Решение ' . $decision->name;
+        return $this->render('decision', [
+            'decision' => $decision,
         ]);
     }
 }

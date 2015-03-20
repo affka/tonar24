@@ -1,3 +1,9 @@
+<?php
+/**
+ * @var \app\models\Decision[] $decisions
+ */
+
+?>
 
 <div class="container">
     <aside class="col-xs-3 catalog-menu">
@@ -116,5 +122,20 @@
             Техника «Тонар» не уступает по характеристикам европейским аналогам, при этом имеет меньший срок окупаемости. Подтверждая качество, мы предоставляем
             3-летнюю гарантию на всю нашу технику!
         </p>
+
+        <h1>Транспортные решения</h1>
+        <p>Подберите технику под конкретный вид перевозок!</p>
+
+        <div style="width: 707px; margin: 0 auto;">
+            <div class="list-group">
+                <?php foreach ($decisions as $decision) { ?>
+                    <a class="list-group-item" href="<?= \yii\helpers\Url::to(['/catalog/decision', 'id' => $decision->id]) ?>">
+                        <span class="badge"><?= $decision->getProducts()->count() ?></span>
+                        <?= $decision->name ?>
+                    </a>
+                <?php } ?>
+            </div>
+        </div>
+
     </section>
 </div>

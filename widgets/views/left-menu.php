@@ -48,7 +48,7 @@ switch (Yii::$app->controller->id) {
                 $isChildActive = $currentCategory && $child->id === $currentCategory->id;
                 ?>
                 <li class="<?= $isChildActive ? 'active' : '' ?>">
-                    <a href="<?= \yii\helpers\Url::to(['/catalog/view', 'slug' => $child->slug]); ?>>">
+                    <a href="<?= \yii\helpers\Url::to(['/catalog/view', 'slug' => $child->slug]); ?>">
                         <?= $child->name ?>
                     </a>
                 </li>

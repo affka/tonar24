@@ -2,6 +2,7 @@
 namespace app\commands;
 
 use app\models\Axis;
+use app\models\Decision;
 use app\models\Document;
 use app\models\ProductComplAdd;
 use app\models\ProductComplMain;
@@ -74,6 +75,8 @@ class TonarController extends Controller
 
             static::removeDirectory(\Yii::$app->getBasePath() . '/web/uploads');
         }
+
+        \Yii::$app->db->createCommand()->truncateTable('product_parts_junction')->execute();
 
         $root = SimpleHTMLDom::file_get_html(self::BASE_URL . '/catalog/');
         foreach ($root->find('.aside1 a') as $a) {
@@ -367,6 +370,47 @@ class TonarController extends Controller
         }
     }
 
+    public function actionDecisions() {
+        $root = SimpleHTMLDom::file_get_html(self::BASE_URL);
+        $nodes = $root->find('#decision', 0)->find('option');
+
+        \Yii::$app->db->createCommand()->truncateTable('decisions_products_junction')->execute();
+
+        $ids = [];
+        foreach ($nodes as $node) {
+            echo "--- " . $node->value . "\n";
+
+            $decision = Decision::findOne(['name' => $node->value]) ?: new Decision();
+            $decision->name = $node->value;
+            if (!$decision->save()) {
+                var_dump($decision->getErrors());
+                throw new Exception('Не удалось сохранить решение!');
+            }
+            $ids[] = $decision->id;
+
+            $this->parseDecision($decision);
+        }
+
+        // Remove not fined
+        foreach (Decision::find()->andWhere(['not in', 'id', $ids])->all() as $model) {
+            $model->delete();
+        }
+    }
+
+    protected function parseDecision($decision) {
+        $root = SimpleHTMLDom::file_get_html(self::BASE_URL . '/catalog/?decision=' . urlencode($decision->name));
+
+        foreach ($root->find('.catalog-section-item-img') as $item) {
+            $product = Products::findOne(['parse_key' => sha1($item->href)]);
+            if (!$product) {
+                continue;
+            }
+
+            echo $product->name . "\n";
+            $decision->link('products', $product);
+        }
+    }
+
     /**
      * Спарсит товары в категории.
      * @param Categories $category
@@ -411,7 +455,7 @@ class TonarController extends Controller
         $properties = [];
 
         //  Основная информация.
-        $product->name = trim(strip_tags($root->find('.card_title', 0)->innertext));
+        $product->name = trim($root->find('.card_title', 0)->plaintext);
         $product->description = trim(strip_tags($root->find('.card_description', 0)->innertext));
         $product->description_short = preg_replace('/[\s]{2,}/', ' ', $shortDesc);
         $product->category_id = $category->id;
