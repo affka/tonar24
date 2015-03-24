@@ -35,7 +35,7 @@ AppAsset::register($this);
             ООО «Красноярск Тонар Сервис»
             </a>
             <div class="address">
-                ул. Северное шоссе 17
+                ул. Северное шоссе 25
             </div>
         </div>
         <div class="logo-phone">
