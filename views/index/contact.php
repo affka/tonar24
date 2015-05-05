@@ -32,7 +32,7 @@
     </section>
     <section class="col-xs-6">
         <div style="float: right; margin-top: 25px; width: 500px; height: 450px;">
-            <script type="text/javascript" charset="utf-8" src="//api-maps.yandex.ru/services/constructor/1.0/js/?sid=giOw3j-RruvxSkv8M9LM9Vlk7uxXp8oK&width=500&height=450"></script>
+            <script type="text/javascript" charset="utf-8" src="https://api-maps.yandex.ru/services/constructor/1.0/js/?sid=U504GtwmKf6c-QJRkJ1A_5ithBs5cAm_&width=500&height=450"></script>
         </div>
     </section>
 </div>
