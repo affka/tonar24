@@ -16,7 +16,7 @@ AppAsset::register($this);
 <head>
     <meta charset="<?= Yii::$app->charset ?>"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" href="<?= \Yii::$app->request->baseUrl ?>/favicon.ico" />
+    <link rel="shortcut icon" href="<?= \Yii::$app->request->baseUrl ?>/favicon2.ico" />
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?> — <?= Yii::$app->name ?></title>
     <?php $this->head() ?>
@@ -35,11 +35,11 @@ AppAsset::register($this);
             ООО «Красноярск Тонар Сервис»
             </a>
             <div class="address">
-                ул. Северное шоссе 25
+                ул. Северное шоссе, 25
             </div>
         </div>
         <div class="logo-phone">
-            Тел. +7 (391) 276-22-15
+            Тел. +7 (391) 219-35-15<br />+7 (391) 276-22-15
             <a href="<?= \yii\helpers\Url::to(['/index/call-back']); ?>">Заказать обратный звонок</a>
         </div>
     </div>
