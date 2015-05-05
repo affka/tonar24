@@ -16,6 +16,15 @@
             <p><a href="mailto:krsk-tonar@mail.ru">krsk-tonar@mail.ru</a></p>
         </blockquote>
         <blockquote>
+            <img src="<?= Yii::$app->request->baseUrl ?>/img/photo-kochergin.jpg" class="contact-photo" />
+            <p><b>Кочергин Валерий Геннадьевич</b></p>
+            <p>Инженер</p>
+            <p>+7 (391) 219-35-15</p>
+            <p>+7 (391) 231-61-61</p>
+            <p>+7 (913) 031-61-61</p>
+            <p><a href="mailto:tonar-krsk@mail.ru">tonar-krsk@mail.ru</a></p>
+        </blockquote>
+        <blockquote>
             <p><b>Криони Степан Георгиевич</b></p>
             <p>Официальный представитель завода в Сибирском федеральном округе</p>
             <p>+7 (961) 070-52-33</p>
