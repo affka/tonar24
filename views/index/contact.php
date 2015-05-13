@@ -11,8 +11,8 @@
             <img src="<?= Yii::$app->request->baseUrl ?>/img/photo-makerov.jpg" class="contact-photo" />
             <p><b>Макеров Андрей Николаевич</b></p>
             <p>Инженер</p>
-            <p>+7 (905) 973-12-70</p>
             <p>+7 (391) 276-22-15</p>
+            <p>+7 (905) 973-12-70</p>
             <p><a href="mailto:krsk-tonar@mail.ru">krsk-tonar@mail.ru</a></p>
         </blockquote>
         <blockquote>

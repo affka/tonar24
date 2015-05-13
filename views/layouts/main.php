@@ -39,7 +39,7 @@ AppAsset::register($this);
             </div>
         </div>
         <div class="logo-phone">
-            Тел. +7 (391) 219-35-15<br />+7 (391) 276-22-15
+            Тел. +7 (391) 219-35-15
             <a href="<?= \yii\helpers\Url::to(['/index/call-back']); ?>">Заказать обратный звонок</a>
         </div>
     </div>

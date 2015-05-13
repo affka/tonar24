@@ -19,7 +19,7 @@ header .logo-line .logo-name .address {
   font-weight: bold;
 }
 header .logo-line .logo-phone {
-  padding: 0 0 0 50px;
+  padding: 15px 0 0 50px;
   float: right;
   font-weight: bold;
   font-size: 22px;
